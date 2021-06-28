@@ -17,7 +17,7 @@
     "firebase": "^8.6.2",
     "react": "17.0.1",
     "react-hook-form": "^7.6.6",
-    "react-native": "0.64.0",
+    "react-native": "0.64.2",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-google-cast": "^4.0.3",
     "react-native-safe-area-context": "^3.2.0",
