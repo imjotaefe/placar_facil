@@ -19,7 +19,6 @@
     "react-hook-form": "^7.6.6",
     "react-native": "0.64.2",
     "react-native-gesture-handler": "^1.10.3",
-    "react-native-google-cast": "^4.0.3",
     "react-native-safe-area-context": "^3.2.0",
     "react-native-screens": "^3.2.0",
     "react-native-svg": "^12.1.1",
@@ -27,13 +26,13 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.13.14",
-    "@babel/runtime": "^7.13.10",
-    "@react-native-community/eslint-config": "^2.0.0",
-    "babel-jest": "^26.6.3",
-    "eslint": "^7.23.0",
-    "jest": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.65.2",
+    "@babel/core": "^7.14.6",
+    "@babel/runtime": "^7.14.6",
+    "@react-native-community/eslint-config": "^3.0.0",
+    "babel-jest": "^27.0.6",
+    "eslint": "^7.29.0",
+    "jest": "^27.0.6",
+    "metro-react-native-babel-preset": "^0.66.0",
     "react-test-renderer": "17.0.1"
   },
   "jest": {
