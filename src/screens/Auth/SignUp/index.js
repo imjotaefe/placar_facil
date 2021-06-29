@@ -1,10 +1,43 @@
 import React from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './styles';
-import {Button, Input} from '../../../components';
+import {Button, ErrorInput, Input} from '../../../components';
 import LeftArrow from '../../../assets/icons/left_arrow.svg';
+import {Controller, useForm} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import firebase from 'firebase';
+
+const schema = yup.object().shape({
+  email: yup.string(),
+  password: yup.string(),
+  confirm_password: yup.string(),
+});
 
 const SignUp = ({navigation}) => {
+  const {
+    handleSubmit,
+    formState: {errors},
+    control,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const onSubmit = async values => {
+    const {email, password, name} = values;
+    await firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(user => user.user.updateProfile({displayName: name}))
+      .catch(() => 'deu problema na criação');
+
+    const user = firebase.auth().currentUser;
+    console.log(user);
+  };
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -26,19 +59,78 @@ const SignUp = ({navigation}) => {
       </View>
       <View style={styles.form}>
         <View style={styles.inputContainer}>
-          <Input placeholder="Digite um nome" label="Nome" />
+          <Controller
+            control={control}
+            name="name"
+            defaultValue=""
+            render={({field: {onChange, value}}) => (
+              <Input
+                onChangeText={text => onChange(text)}
+                name="name"
+                value={value}
+                placeholder="Digite um nome"
+                label="Nome"
+              />
+            )}
+          />
+          <ErrorInput error={errors?.name?.message} />
         </View>
         <View style={styles.inputContainer}>
-          <Input placeholder="usuário@placarFacil.com" label="E-mail" isEmail />
+          <Controller
+            control={control}
+            name="email"
+            defaultValue=""
+            render={({field: {onChange, value}}) => (
+              <Input
+                onChangeText={text => onChange(text)}
+                name="email"
+                value={value}
+                placeholder="usuário@placarFacil.com"
+                label="E-mail"
+                isEmail
+              />
+            )}
+          />
+          <ErrorInput error={errors?.email?.message} />
         </View>
         <View style={styles.inputContainer}>
-          <Input placeholder="123!@Abc" label="Senha" isPassword />
+          <Controller
+            control={control}
+            name="password"
+            defaultValue=""
+            render={({field: {onChange, value}}) => (
+              <Input
+                placeholder="123!@Abc"
+                onChangeText={text => onChange(text)}
+                value={value}
+                label="Senha"
+                isPassword
+                name="password"
+              />
+            )}
+          />
+          <ErrorInput error={errors?.password?.message} />
         </View>
         <View style={styles.inputContainer}>
-          <Input placeholder="123!@Abc" label="Confirme a senha" isPassword />
+          <Controller
+            control={control}
+            name="confirm_password"
+            defaultValue=""
+            render={({field: {onChange, value}}) => (
+              <Input
+                placeholder="123!@Abc"
+                onChangeText={text => onChange(text)}
+                value={value}
+                label="Confirmação de Senha"
+                isPassword
+                name="confirm_password"
+              />
+            )}
+          />
+          <ErrorInput error={errors?.confirm_password?.message} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button text="CADASTRAR" />
+          <Button label="CADASTRAR" onPress={handleSubmit(onSubmit)} />
         </View>
       </View>
     </ScrollView>

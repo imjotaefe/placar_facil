@@ -29,22 +29,9 @@ const SignIn = ({navigation}) => {
     },
   });
 
-  useEffect(() => {
-    var firebaseConfig = {
-      apiKey: 'AIzaSyDFTDWhnChN4g4clObbiLXzr6Pxy4CdxWU',
-      authDomain: 'placar-facil.firebaseapp.com',
-      databaseURL: 'https://placar-facil-default-rtdb.firebaseio.com',
-      projectId: 'placar-facil',
-      storageBucket: 'placar-facil.appspot.com',
-      messagingSenderId: '411932128819',
-      appId: '1:411932128819:web:59168758eb718e43ea1546',
-      measurementId: 'G-4TMQXJHJCS',
-    };
-    firebase.initializeApp(firebaseConfig);
-  }, []);
-
   const onSubmit = data => {
     const {email, password} = data;
+
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
