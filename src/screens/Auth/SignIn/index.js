@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './styles';
 import {Button, Input, ErrorInput} from '../../../components';
@@ -7,6 +7,8 @@ import firebase from 'firebase';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Controller, useForm} from 'react-hook-form';
 import * as yup from 'yup';
+import {useDispatch, useSelector} from 'react-redux';
+import {Creators as AuthActions} from '../../../store/ducks/auth';
 
 const schema = yup.object().shape({
   email: yup.string().required('Campo Obrigatório').email('Email inválido'),
@@ -28,15 +30,23 @@ const SignIn = ({navigation}) => {
       password: '',
     },
   });
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState();
 
   const onSubmit = data => {
+    setLoading(true);
     const {email, password} = data;
 
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(user => console.log('logado', user))
-      .catch(error => console.log('deu ruim', error));
+      .then(user => {
+        dispatch(AuthActions.authSuccess(user));
+        setLoading(false);
+      })
+      .catch(error =>
+        dispatch(AuthActions.authError('Erro ao autenticar usuário')),
+      );
   };
 
   return (
@@ -87,7 +97,11 @@ const SignIn = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={styles.buttonContainer}>
-          <Button onPress={handleSubmit(onSubmit)} label="ENTRAR" />
+          <Button
+            disabled={loading}
+            onPress={handleSubmit(onSubmit)}
+            label={loading ? 'CARREGANDO...' : 'ENTRAR'}
+          />
         </View>
       </View>
       <View style={styles.createAccountContainer}>

@@ -15,6 +15,19 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: 'bold',
   },
+  disabledContainer: {
+    backgroundColor: colors.gray,
+    height: 50,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 12,
+    paddingHorizontal: 50,
+    paddingVertical: 15,
+  },
+  disabledText: {
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

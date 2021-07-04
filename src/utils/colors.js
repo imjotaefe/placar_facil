@@ -5,6 +5,9 @@ const colors = {
   red: '#D24319',
   gray: '#EEEEEE',
   darkgray: '#B7B7B7',
+  weakOrange: '#fffcf7ff',
+  weakBlue: '#faf9feff',
+  blue: '#7876ecff',
 };
 
 export default colors;

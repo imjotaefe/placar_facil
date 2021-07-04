@@ -1,18 +1,28 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Text} from 'react-native';
 import AuthStack from './Auth';
+import AppStack from './App';
+import {useSelector} from 'react-redux';
 
 const Root = createStackNavigator();
 
 const RootStack = () => {
-  const isLoggedIn = false;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const {user} = useSelector(({auth}) => auth);
+
+  useEffect(() => {
+    console.log(user);
+    if (user) {
+      setIsLoggedIn(true);
+    }
+  }, [user]);
+
   return (
-    <Root.Navigator initialRouteName="Auth" headerMode="none">
+    <Root.Navigator initialRouteName="AuthStack" headerMode="none">
       {isLoggedIn ? (
-        <Root.Screen name="App" component={<Text>app</Text>} />
+        <Root.Screen name="AppStack" component={AppStack} />
       ) : (
-        <Root.Screen name="Auth" component={AuthStack} />
+        <Root.Screen name="AuthStack" component={AuthStack} />
       )}
     </Root.Navigator>
   );
