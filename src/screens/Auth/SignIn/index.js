@@ -92,7 +92,8 @@ const SignIn = ({navigation}) => {
           <ErrorInput error={errors?.password?.message} />
         </View>
         <View style={styles.forgotContainer}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgotPassword')}>
             <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
           </TouchableOpacity>
         </View>

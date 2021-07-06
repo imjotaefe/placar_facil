@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
   },
   settingsContainer: {
     marginBottom: 30,
+    paddingLeft: 35,
   },
   logoff: {
     color: colors.red,

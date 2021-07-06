@@ -12,12 +12,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 40,
-    marginBottom: 80,
-  },
-  informartion: {
-    color: colors.darkgray,
-    textAlign: 'center',
-    marginTop: 15,
   },
   form: {
     marginTop: 30,
@@ -30,21 +24,26 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 70,
   },
-  headerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+  createAccount: {
+    fontWeight: '700',
+    textDecorationLine: 'underline',
   },
-  textHeaderContainer: {
+  createAccountContainer: {
+    marginTop: 25,
     flex: 1,
+    flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
   },
-  emptyContainer: {
-    backgroundColor: 'blue',
-    width: 10.9,
+  forgotPassword: {
+    color: colors.darkgray,
+    textDecorationLine: 'underline',
+  },
+  forgotContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 });
 
