@@ -92,7 +92,7 @@ const Home = ({navigation}) => {
             <Button
               label="NOVA PARTIDA"
               elevation
-              onPress={() => console.log('teste')}
+              onPress={() => navigation.navigate('ChooseType')}
             />
           </View>
         </View>
