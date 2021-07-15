@@ -1,12 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import LeftArrow from '../../../../assets/icons/left_arrow.svg';
 import PlayerOne from '../../../../assets/icons/player_1.svg';
 import Pair from '../../../../assets/icons/pair.svg';
 import DropShadow from 'react-native-drop-shadow';
-import Button from './../../../../components/Button/index';
+import Button from '../../../../components/Button';
 import styles from './styles';
+import Header from '../../../../components/Header';
 
 const shadowStyle = {
   shadowColor: '#000',
@@ -62,14 +62,7 @@ const ChooseType = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <View style={styles.backButton}>
-          <LeftArrow />
-        </View>
-      </TouchableOpacity>
-      <View style={styles.header}>
-        <Text style={styles.titleHeader}>Tipo de partida</Text>
-      </View>
+      <Header hasBack text="TIPO DA PARTIDA" navigation={navigation} />
       <View>
         <TouchableOpacity onPress={() => setSelected('single')}>
           {renderType('single')}
@@ -86,7 +79,7 @@ const ChooseType = ({navigation}) => {
             label="CONTINUAR"
             elevation
             disabled={selected === ''}
-            onPress={() => console.log(selected)}
+            onPress={() => navigation.navigate('TypeNames', {type: selected})}
           />
         </View>
       </View>

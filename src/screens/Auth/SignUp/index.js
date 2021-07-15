@@ -1,7 +1,9 @@
 import React from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './styles';
-import {Button, ErrorInput, Input} from '../../../components';
+import Button from '../../../components/Button';
+import Input from '../../../components/Input';
+import ErrorInput from '../../../components/ErrorInput';
 import LeftArrow from '../../../assets/icons/left_arrow.svg';
 import {Controller, useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';

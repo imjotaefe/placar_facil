@@ -7,7 +7,7 @@ const colors = {
   darkgray: '#B7B7B7',
   weakOrange: '#fffcf7ff',
   weakBlue: '#faf9feff',
-  blue: '#7876ecff',
+  blue: '#5754E9',
 };
 
 export default colors;

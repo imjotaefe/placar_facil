@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './styles';
-import {Button, Input, ErrorInput} from '../../../components';
+import Button from '../../../components/Button';
+import Input from '../../../components/Input';
+import ErrorInput from '../../../components/ErrorInput';
 import Logo from '../../../assets/icons/full_logo.svg';
 import firebase from 'firebase';
 import {yupResolver} from '@hookform/resolvers/yup';

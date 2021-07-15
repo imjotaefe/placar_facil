@@ -5,7 +5,7 @@ import Hamburguer from '../../../assets/icons/hamb.svg';
 import Logo from '../../../assets/icons/logo.svg';
 import styles from './styles';
 import HistoryCard from '../../../components/HistoryCard';
-import Button from './../../../components/Button/index';
+import Button from '../../../components/Button';
 import Modal from 'react-native-modal';
 import Close from '../../../assets/icons/close.svg';
 import Share from '../../../assets/icons/share.svg';
