@@ -46,16 +46,22 @@ const TypeNames = ({navigation, route}) => {
     let team1;
     let team2;
     if (type === 'pair') {
-      team1 = {player1: data.player1, player2: data.player2};
-      team2 = {player1: data.player3, player2: data.player4};
+      team1 = {
+        player1: data.player1.toUpperCase(),
+        player2: data.player2.toUpperCase(),
+      };
+      team2 = {
+        player1: data.player3.toUpperCase(),
+        player2: data.player4.toUpperCase(),
+      };
     } else {
-      team1 = {player1: data.player1};
-      team2 = {player1: data.player2};
+      team1 = {player1: data.player1.toUpperCase()};
+      team2 = {player1: data.player2.toUpperCase()};
     }
     navigation.navigate('SortSide', {team1, team2, type});
   };
 
-  const renderSingleInput = type => {
+  const renderInputs = type => {
     const singleType = [
       {
         label: 'Jogador 1',
@@ -126,7 +132,7 @@ const TypeNames = ({navigation, route}) => {
     <ScrollView style={styles.container}>
       <Header hasBack text="JOGADORES" navigation={navigation} />
       <View>
-        {renderSingleInput(type)}
+        {renderInputs(type)}
         <View style={styles.buttonContainer}>
           <Button
             label="CONTINUAR"

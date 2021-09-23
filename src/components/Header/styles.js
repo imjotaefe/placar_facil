@@ -5,7 +5,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: -23,
     marginBottom: 60,
   },
   titleHeader: {

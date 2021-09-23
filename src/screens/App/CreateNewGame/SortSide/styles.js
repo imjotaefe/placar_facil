@@ -149,6 +149,11 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
+  swapHorizontalContainer: {
+    backgroundColor: colors.orange,
+    padding: 5,
+    borderRadius: 8,
+  },
 });
 
 export default styles;

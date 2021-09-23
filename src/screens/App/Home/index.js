@@ -14,13 +14,13 @@ import {database, auth} from '../../../service/firebase';
 
 const Home = ({navigation}) => {
   const [modalisVisible, setModalIsVisible] = useState(false);
-  const [games, setGames] = useState();
+  const [games, setGames] = useState(null);
 
   useEffect(() => {
     const {currentUser} = auth;
     console.log(currentUser.uid);
-    database.ref(`/umpires/${currentUser.uid}`).on('value', snapshot => {
-      console.log('testessdfsdf', snapshot.val());
+    database.ref(`/umpires/${currentUser.uid}/games`).on('value', snapshot => {
+      setGames(snapshot.val());
     });
   }, []);
 
@@ -70,18 +70,18 @@ const Home = ({navigation}) => {
   return (
     <View style={styles.container}>
       {renderHeader()}
-      {console.log(games)}
+      {console.log(games && Object.values(games))}
       <View style={styles.historyContainer}>
         <Text style={styles.title}>Histórico de Partidas</Text>
         <FlatList
           showsVerticalScrollIndicator={false}
           style={styles.flat}
-          data={[{}, {}, {}, {}, {}, {}, {}]}
+          data={games ? Object.values(games) : []}
           renderItem={({item, index}) => {
             return index === 6 ? (
               <View style={styles.spacer} />
             ) : (
-              <HistoryCard isPair setModalIsVisible={setModalIsVisible} />
+              <HistoryCard game={item} setModalIsVisible={setModalIsVisible} />
             );
           }}
         />

@@ -4,6 +4,7 @@ import {View, Text, TouchableOpacity} from 'react-native';
 import PlayerOne from '../../../../assets/icons/player_1.svg';
 import PlayerTwo from '../../../../assets/icons/player_2.svg';
 import Swap from '../../../../assets/icons/swap.svg';
+import SwapHorizontal from '../../../../assets/icons/swapHorizontal.svg';
 import Raquet from '../../../../assets/icons/raquet.svg';
 import Button from '../../../../components/Button';
 import styles from './styles';
@@ -109,21 +110,56 @@ const SortSide = ({navigation, route}) => {
         <View style={styles.playersContainer}>
           <Player color="orange" name={leftPlayers?.player1} side="top" />
           {type === 'pair' && (
-            <Player color="orange" name={leftPlayers?.player2} side="top" />
+            <>
+              <TouchableOpacity
+                style={{alignItems: 'center', flexDirection: 'row'}}
+                onPress={() =>
+                  setLeftPlayers({
+                    player1: leftPlayers?.player2,
+                    player2: leftPlayers?.player1,
+                  })
+                }>
+                <View style={styles.swapHorizontalContainer}>
+                  <SwapHorizontal />
+                </View>
+              </TouchableOpacity>
+              <Player color="orange" name={leftPlayers?.player2} side="top" />
+            </>
           )}
         </View>
         <Table />
         <View style={styles.playersContainer}>
           <Player color="blue" name={rightPlayers?.player1} side="bottom" />
           {type === 'pair' && (
-            <Player color="blue" name={rightPlayers?.player2} side="bottom" />
+            <>
+              <TouchableOpacity
+                style={{alignItems: 'center', flexDirection: 'row'}}
+                onPress={() =>
+                  setRightPlayers({
+                    player1: rightPlayers?.player2,
+                    player2: rightPlayers?.player1,
+                  })
+                }>
+                <View style={styles.swapHorizontalContainer}>
+                  <SwapHorizontal />
+                </View>
+              </TouchableOpacity>
+              <Player color="blue" name={rightPlayers?.player2} side="bottom" />
+            </>
           )}
         </View>
         <View style={styles.buttonContainer}>
           <Button
             label="CONTINUAR"
             elevation
-            onPress={() => console.log('testes')}
+            onPress={() =>
+              navigation.navigate('GameConfig', {
+                type,
+                selectedStart,
+                rightPlayers,
+                leftPlayers,
+              })
+            }
           />
         </View>
       </View>
