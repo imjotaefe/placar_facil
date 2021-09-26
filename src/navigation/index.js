@@ -19,7 +19,7 @@ const RootStack = () => {
 
   return (
     <Root.Navigator initialRouteName="AuthStack" headerMode="none">
-      {isLoggedIn ? (
+      {!isLoggedIn ? (
         <Root.Screen name="AppStack" component={AppStack} />
       ) : (
         <Root.Screen name="AuthStack" component={AuthStack} />
