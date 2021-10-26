@@ -86,6 +86,72 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  modal: {
+    backgroundColor: colors.white,
+    borderRadius: 8,
+    paddingBottom: 25,
+    paddingTop: 10,
+  },
+  closeContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginRight: 10,
+  },
+  closeButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  contentContainer: {
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  modalText: {
+    color: colors.darkgray,
+    marginTop: 5,
+  },
+  tofileButton: {
+    marginTop: 35,
+    borderRadius: 8,
+    backgroundColor: colors.orange,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 30,
+    paddingVertical: 13,
+  },
+  buttonTextToFile: {
+    fontWeight: 'bold',
+    color: colors.white,
+    marginLeft: 5,
+  },
+  shareButton: {
+    marginTop: 10,
+    borderRadius: 8,
+    backgroundColor: colors.white,
+    borderWidth: 3,
+    borderColor: colors.orange,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 28,
+    paddingVertical: 11,
+  },
+  buttonTextShare: {
+    fontWeight: 'bold',
+    color: colors.orange,
+    marginLeft: 5,
+  },
+  pairTwo: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
 });
 
 export default styles;

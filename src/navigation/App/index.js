@@ -1,6 +1,7 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import HomeDrawer from './HomeDrawer';
+import ScoreDrawer from './ScoreDrawer';
 import ChooseType from '../../screens/App/CreateNewGame/ChooseType';
 import TypeNames from '../../screens/App/CreateNewGame/TypeNames';
 import SortSide from '../../screens/App/CreateNewGame/SortSide';
@@ -16,6 +17,7 @@ const AppStack = () => {
       <Stack.Screen name="TypeNames" component={TypeNames} />
       <Stack.Screen name="SortSide" component={SortSide} />
       <Stack.Screen name="GameConfig" component={GameConfig} />
+      <Stack.Screen name="ScoreBoard" component={ScoreDrawer} />
     </Stack.Navigator>
   );
 };

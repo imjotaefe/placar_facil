@@ -60,6 +60,7 @@ const GameConfig = ({navigation, route}) => {
       rightPlayers: {...rightPlayers, finalScore: 0},
       leftPlayers: {...leftPlayers, finalScore: 0},
       gameStartAt: dateOfTheGame,
+      gameFinished: false,
       gameFinishAt: dateOfTheGame,
       ...data,
     };

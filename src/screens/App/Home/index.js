@@ -1,3 +1,4 @@
+/* eslint-disable no-sparse-arrays */
 import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList} from 'react-native';
 import Search from '../../../assets/icons/search.svg';
@@ -6,19 +7,16 @@ import Logo from '../../../assets/icons/logo.svg';
 import styles from './styles';
 import HistoryCard from '../../../components/HistoryCard';
 import Button from '../../../components/Button';
-import Modal from 'react-native-modal';
-import Close from '../../../assets/icons/close.svg';
-import Share from '../../../assets/icons/share.svg';
-import ToFile from '../../../assets/icons/toFile.svg';
+
 import {database, auth} from '../../../service/firebase';
+import colors from './../../../utils/colors';
 
 const Home = ({navigation}) => {
-  const [modalisVisible, setModalIsVisible] = useState(false);
   const [games, setGames] = useState(null);
+  const [showType, setShowType] = useState('FINISHED');
 
   useEffect(() => {
     const {currentUser} = auth;
-    console.log(currentUser.uid);
     database.ref(`/umpires/${currentUser.uid}/games`).on('value', snapshot => {
       setGames(snapshot.val());
     });
@@ -38,53 +36,93 @@ const Home = ({navigation}) => {
     );
   };
 
-  const renderModal = () => {
-    return (
-      <Modal isVisible={modalisVisible}>
-        <View style={styles.modal}>
-          <View style={styles.closeContainer}>
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setModalIsVisible(false)}>
-              <Close />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.contentContainer}>
-            <Text style={styles.modalTitle}>O QUE DESEJA FAZER?</Text>
-            <Text style={styles.modalText}>Lorem ipsum dolor sit</Text>
-            <TouchableOpacity style={styles.tofileButton}>
-              <ToFile />
-              <Text style={styles.buttonTextToFile}>ARQUIVAR</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.shareButton}>
-              <Share />
-              <Text style={styles.buttonTextShare}>EXPORTAR</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    );
-  };
-
   return (
     <View style={styles.container}>
       {renderHeader()}
-      {console.log(games && Object.values(games))}
       <View style={styles.historyContainer}>
-        <Text style={styles.title}>Histórico de Partidas</Text>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          style={styles.flat}
-          data={games ? Object.values(games) : []}
-          renderItem={({item, index}) => {
-            return index === 6 ? (
-              <View style={styles.spacer} />
-            ) : (
-              <HistoryCard game={item} setModalIsVisible={setModalIsVisible} />
-            );
-          }}
-        />
+        <Text style={styles.title}>
+          {showType === 'FINISHED'
+            ? 'Historico de partidas'
+            : 'Partidas em andamento'}
+        </Text>
+        <View style={styles.switchButtonContainer}>
+          <TouchableOpacity
+            onPress={() => setShowType('FINISHED')}
+            style={[
+              {
+                backgroundColor:
+                  showType === 'FINISHED' ? colors.orange : colors.gray,
+              },
+              styles.switchButton,
+              ,
+            ]}>
+            <Text
+              style={{
+                fontWeight: '700',
+                color: showType === 'INPROGRESS' ? colors.darkgray : '#000',
+              }}>
+              FINALIZADAS
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setShowType('INPROGRESS')}
+            style={[
+              {
+                backgroundColor:
+                  showType === 'INPROGRESS' ? colors.orange : colors.gray,
+              },
+              styles.switchButton,
+              ,
+            ]}>
+            <Text
+              style={{
+                fontWeight: '700',
+                color: showType === 'FINISHED' ? colors.darkgray : '#000',
+              }}>
+              EM ANDAMENTO
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {showType === 'INPROGRESS' ? (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={styles.flat}
+            data={games ? Object.values(games) : []}
+            renderItem={({item, index}) => {
+              if (!item.gameFinished) {
+                return index === 6 ? (
+                  <View style={styles.spacer} />
+                ) : (
+                  <HistoryCard
+                    game={item}
+                    gameId={Object.keys(games)[index]}
+                    navigation={navigation}
+                  />
+                );
+              }
+            }}
+          />
+        ) : (
+          <FlatList
+            showsVerticalScrollIndicator={false}
+            style={styles.flat}
+            data={games ? Object.values(games) : []}
+            renderItem={({item, index}) => {
+              if (item.gameFinished) {
+                return index === 6 ? (
+                  <View style={styles.spacer} />
+                ) : (
+                  <HistoryCard
+                    game={item}
+                    gameId={Object.keys(games)[index]}
+                    navigation={navigation}
+                  />
+                );
+              }
+            }}
+          />
+        )}
       </View>
       <View>
         <View style={styles.buttonContainer}>
@@ -97,7 +135,6 @@ const Home = ({navigation}) => {
           </View>
         </View>
       </View>
-      {renderModal()}
     </View>
   );
 };
