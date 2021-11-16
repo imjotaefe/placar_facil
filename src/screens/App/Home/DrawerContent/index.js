@@ -26,11 +26,6 @@ const DrawerContent = ({navigation}) => {
       action: () => console.log('reiniciar placar'),
     },
     {
-      text: 'Ajustar o placar',
-      icon: <Edit width={18} />,
-      action: () => console.log('ajustar placar'),
-    },
-    {
       text: 'Alterar nomes',
       icon: <EditText width={18} />,
       action: () => console.log('alterar nomes'),

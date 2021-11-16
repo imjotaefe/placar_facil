@@ -9,6 +9,10 @@ import {useForm} from 'react-hook-form';
 import * as yup from 'yup';
 import firebase from 'firebase';
 import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
+var relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
 
 const schema = yup.object().shape({
   bestOf: yup.string().required('Campo Obrigatório'),
@@ -17,7 +21,6 @@ const schema = yup.object().shape({
   pause: yup.string().required('Campo Obrigatório'),
   technicalInterval: yup.string().required('Campo Obrigatório'),
   medicalAssistence: yup.string().required('Campo Obrigatório'),
-  intervalAtSix: yup.string().required('Campo Obrigatório'),
   aceleration: yup.string().required('Campo Obrigatório'),
   advantage: yup.string().required('Campo Obrigatório'),
 });
@@ -37,7 +40,6 @@ const GameConfig = ({navigation, route}) => {
       pause: null,
       technicalInterval: null,
       medicalAssistence: null,
-      intervalAtSix: null,
       aceleration: null,
       advantage: null,
     },
@@ -45,12 +47,13 @@ const GameConfig = ({navigation, route}) => {
 
   const onSubmit = data => {
     console.log('-----------------');
-    console.log(type);
-    console.log(selectedStart);
-    console.log(rightPlayers);
-    console.log(leftPlayers);
+    // console.log(type);
+    // console.log(selectedStart);
+    // console.log(rightPlayers);
+    // console.log(leftPlayers);
+    console.log('sdfsdf', dayjs.duration({hour: 0, minute: 0, seconds: 0}));
     console.log('-----------------');
-    console.log(data);
+    // console.log(data);
 
     const dateOfTheGame = String(dayjs());
 
@@ -59,9 +62,24 @@ const GameConfig = ({navigation, route}) => {
       startSide: selectedStart,
       rightPlayers: {...rightPlayers, finalScore: 0},
       leftPlayers: {...leftPlayers, finalScore: 0},
-      gameStartAt: dateOfTheGame,
       gameFinished: false,
-      gameFinishAt: dateOfTheGame,
+      saqueSettings: {
+        countSaque: 1,
+        saquePlayerCount: 1,
+        saqueSide: selectedStart,
+        saqueTeamSide: 'top',
+      },
+      gameTime: dayjs
+        .duration({hour: 0, minute: 0, seconds: 0})
+        .format('mm:ss'),
+      totalGameTime: dayjs
+        .duration({hour: 0, minute: 0, seconds: 0})
+        .format('HH:mm:ss'),
+      game: 1,
+      sumula: {
+        gameStartAt: dateOfTheGame,
+        gameFinishAt: dateOfTheGame,
+      },
       ...data,
     };
     const {currentUser} = firebase.auth();
@@ -70,7 +88,12 @@ const GameConfig = ({navigation, route}) => {
       .database()
       .ref(`/umpires/${currentUser.uid}/games`)
       .push(newGame)
-      .then(() => console.log('foi salvo'))
+      .then(newGame =>
+        navigation.navigate('ScoreBoard', {
+          screen: 'ScoreBoard',
+          params: {gameId: newGame.getKey()},
+        }),
+      )
       .catch(() => console.log('erro ao salvar'));
   };
 
@@ -146,18 +169,6 @@ const GameConfig = ({navigation, route}) => {
           {label: '120', value: '120'},
           {label: '125', value: '125'},
           {label: '130', value: '130'},
-        ]}
-      />
-      <SelectInput
-        label="Intervalo a cada 6 pts"
-        name="intervalAtSix"
-        control={control}
-        items={[
-          {label: '60', value: '60'},
-          {label: '65', value: '65'},
-          {label: '70', value: '70'},
-          {label: '75', value: '75'},
-          {label: '80', value: '80'},
         ]}
       />
       <SelectInput

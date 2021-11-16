@@ -14,11 +14,15 @@ import styles from './styles';
 import {colors} from '../../utils';
 
 const HistoryCard = ({game, gameId, navigation}) => {
-  const {gameType, rightPlayers, leftPlayers, gameStartAt, gameFinishAt} = game;
+  const {gameType, rightPlayers, leftPlayers, sumula} = game;
   const [modalisVisible, setModalIsVisible] = useState(false);
-  const startGame = dayjs(gameStartAt).format('HH:mm');
-  const endGame = dayjs(gameFinishAt).format('HH:mm');
-  const dateGame = dayjs(gameFinishAt).format('DD/MM/YYYY');
+  const startGame = dayjs(sumula?.gameStartAt)
+    .subtract(3, 'hours')
+    .format('HH:mm');
+  const endGame = dayjs(sumula?.gameFinishAt)
+    .subtract(3, 'hours')
+    .format('HH:mm');
+  const dateGame = dayjs(sumula?.gameStartAt).format('DD/MM/YYYY');
 
   const renderModal = () => {
     return (
@@ -124,7 +128,8 @@ const HistoryCard = ({game, gameId, navigation}) => {
           <Text style={styles.textDate}>{dateGame || '00/00/0000'}</Text>
           <Timer style={styles.timer} />
           <Text style={styles.textDate}>
-            {startGame || '00:00'} - {endGame || '00:00'}
+            {startGame || '00:00'} -{' '}
+            {startGame === endGame ? 'XX:XX' : endGame || '00:00'}
           </Text>
         </View>
         <TouchableOpacity

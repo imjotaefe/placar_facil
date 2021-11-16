@@ -206,6 +206,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  bottomRaquetContainer: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+  },
+  topRaquetContainer: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+  },
 });
 
 export default styles;

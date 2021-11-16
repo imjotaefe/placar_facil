@@ -89,6 +89,7 @@ const Home = ({navigation}) => {
             showsVerticalScrollIndicator={false}
             style={styles.flat}
             data={games ? Object.values(games) : []}
+            ListFooterComponent={<View style={{height: 130}} />}
             renderItem={({item, index}) => {
               if (!item.gameFinished) {
                 return index === 6 ? (
@@ -108,6 +109,7 @@ const Home = ({navigation}) => {
             showsVerticalScrollIndicator={false}
             style={styles.flat}
             data={games ? Object.values(games) : []}
+            ListFooterComponent={<View style={{height: 130}} />}
             renderItem={({item, index}) => {
               if (item.gameFinished) {
                 return index === 6 ? (

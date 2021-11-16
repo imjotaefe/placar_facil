@@ -16,6 +16,7 @@ import styles from './styles';
 import GameTime from '../../../assets/icons/gameTime.svg';
 import Hamburguer from '../../../assets/icons/hamb.svg';
 import PauseGame from '../../../assets/icons/pauseGame.svg';
+import Raquet from '../../../assets/icons/raquet.svg';
 import FinishGame from '../../../assets/icons/finishGame.svg';
 import CastNotConnected from '../../../assets/icons/castNotConnected.svg';
 // import SystemNavigationBar from 'react-native-system-navigation-bar';
@@ -25,54 +26,131 @@ import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import {database, auth} from '../../../service/firebase';
 dayjs.extend(duration);
+var relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(relativeTime);
 // var Orientation = require('react-native').NativeModules.Orientation;
+var customParseFormat = require('dayjs/plugin/customParseFormat');
+dayjs.extend(customParseFormat);
 
 const ScoreBoard = ({route, navigation}) => {
   const {gameId} = route.params;
   const [leftTeamScore, setLeftTeamScore] = useState(0);
   const [rightTeamScore, setRightTeamScore] = useState(0);
   const [modalisVisible, setModalIsVisible] = useState(false);
-  const startGame = dayjs.duration({hour: 0, minute: 0, seconds: 0});
-  const [gameTime, setGameTime] = useState(startGame);
-  const [totalGameTime, setTotalGameTime] = useState(startGame);
+  const [gameTime, setGameTime] = useState(null);
+  const [totalGameTime, setTotalGameTime] = useState(null);
   const [isPaused, setIsPaused] = useState(false);
   const [dim, setDim] = useState();
   const [isPortrait, setIsPortrait] = useState(false);
   const [gameData, setGameData] = useState(null);
   const [game, setGame] = useState(1);
   const [pointId, setPointId] = useState(1);
-
-  useEffect(() => {
-    if (!isPaused) {
-      setTimeout(() => {
-        setGameTime(gameTime.add(1, 'seconds'));
-      }, 1000);
-    }
-  }, [gameTime, isPaused]);
-
-  useEffect(() => {
-    if (!isPaused) {
-      setTimeout(() => {
-        setTotalGameTime(totalGameTime.add(1, 'seconds'));
-      }, 1000);
-    }
-  }, [isPaused, totalGameTime]);
+  const [countSaque, setCountSaque] = useState(null);
+  const [saqueSide, setSaqueSide] = useState(null);
+  const [saqueTeamSide, setSaqueTeamSide] = useState(null);
+  const [saquePlayerCount, setSaquePlayerCount] = useState(null);
+  const [disableToClick, setDisableToClick] = useState(false);
+  const [loadingData, setLoadingData] = useState(true);
 
   useEffect(() => {
     const {currentUser} = auth;
     database
       .ref(`/umpires/${currentUser.uid}/games/${gameId}`)
-      .on('value', snapshot => {
-        setGameData(snapshot.val());
+      .once('value', data => {
+        setGameData(data.val());
+        const gameTimeFromBD = dayjs(data?.val()?.gameTime, 'mm:ss');
+        const gameTimeConfig = dayjs.duration({
+          hour: gameTimeFromBD.hour(),
+          minute: gameTimeFromBD.minute(),
+          seconds: gameTimeFromBD.second(),
+        });
+        setGameTime(gameTimeConfig);
+
+        const totalGameTimeFromBD = dayjs(
+          data?.val()?.totalGameTime,
+          'HH:mm:ss',
+        );
+        const totalGameTimeConfig = dayjs.duration({
+          hour: totalGameTimeFromBD.hour(),
+          minute: totalGameTimeFromBD.minute(),
+          seconds: totalGameTimeFromBD.second(),
+        });
+        setTotalGameTime(totalGameTimeConfig);
+        setRightTeamScore(data?.val()?.rightPlayers?.finalScore);
+        setLeftTeamScore(data?.val()?.leftPlayers?.finalScore);
+        setCountSaque(data?.val()?.saqueSettings?.countSaque);
+        setSaquePlayerCount(data?.val()?.saqueSettings?.saquePlayerCount);
+        setSaqueSide(data?.val()?.saqueSettings?.saqueSide);
+        setSaqueTeamSide(data?.val()?.saqueSettings?.saqueTeamSide);
+        setLoadingData(false);
       });
   }, []);
+
+  const addSecondOnGameTime = async timer => {
+    if (!isPaused) {
+      timer = await setTimeout(() => {
+        setGameTime(gameTime?.add(1, 'seconds'));
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    var timer;
+    if (!loadingData && gameData) {
+      addSecondOnGameTime(timer);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [gameTime, isPaused]);
+
+  const addSecondOnTotalGameTime = async timer => {
+    if (!isPaused) {
+      timer = await setTimeout(() => {
+        setTotalGameTime(totalGameTime?.add(1, 'seconds'));
+      }, 1000);
+    }
+  };
+
+  useEffect(() => {
+    var timer;
+    if (!loadingData && gameData) {
+      addSecondOnTotalGameTime(timer);
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [isPaused, totalGameTime]);
+
+  useEffect(async () => {
+    if (!loadingData) {
+      await updateGameData({
+        totalGameTime: totalGameTime?.format('HH:mm:ss'),
+      });
+      await updateGameData({gameTime: gameTime?.format('mm:ss')});
+    }
+  }, [gameTime, totalGameTime, loadingData]);
 
   useEffect(() => {
     StatusBar?.setHidden(true);
   }, []);
 
   useEffect(() => {
-    setDim(Dimensions.get('screen'));
+    if (gameData?.gameType !== 'single' && gameData?.startSide === 'right') {
+      setSaqueTeamSide('bottom');
+    }
+    if (gameData?.gameType === 'single') {
+      setSaqueTeamSide('bottom');
+    }
+  }, [gameData?.startSide]);
+
+  useEffect(() => {
+    var timer = setTimeout(() => {
+      setDim(Dimensions.get('screen'));
+    }, 100);
+    return () => {
+      clearTimeout(timer);
+    };
   });
 
   useEffect(() => {
@@ -92,7 +170,17 @@ const ScoreBoard = ({route, navigation}) => {
   };
 
   const finishGame = async () => {
-    const response = await updateGameData({gameFinished: true});
+    var pastSumula;
+    const {currentUser} = auth;
+    database
+      .ref(`/umpires/${currentUser.uid}/games/${gameId}`)
+      .on('value', snapshot => {
+        pastSumula = snapshot.val();
+      });
+    const response = await updateGameData({
+      gameFinished: true,
+      sumula: {...pastSumula.sumula, gameFinishAt: String(dayjs())},
+    });
     if (response) {
       navigation.navigate('Home');
     }
@@ -139,11 +227,82 @@ const ScoreBoard = ({route, navigation}) => {
     await updateGameData(data);
   };
 
+  const updateSaqueSettings = async ({
+    countSaqueSetting,
+    saquePlayerCountSetting,
+    saqueSideSetting,
+    saqueTeamSideSetting,
+  }) => {
+    const data = {
+      saqueSettings: {
+        countSaque: countSaqueSetting,
+        saquePlayerCount: saquePlayerCountSetting,
+        saqueSide: saqueSideSetting,
+        saqueTeamSide: saqueTeamSideSetting,
+      },
+    };
+    await updateGameData(data);
+  };
+
+  const handleSaqueSide = type => {
+    let countSaqueSetting = countSaque;
+    let saquePlayerCountSetting = saquePlayerCount;
+    let saqueSideSetting = saqueSide;
+    let saqueTeamSideSetting = saqueTeamSide;
+
+    if (type === 'add') {
+      setCountSaque(countSaque + 1);
+      countSaqueSetting = countSaque + 1;
+      if (countSaque % 2 === 0) {
+        setSaqueSide(saqueSide === 'left' ? 'right' : 'left');
+        saqueSideSetting = saqueSide === 'left' ? 'right' : 'left';
+        if (gameData?.gameType !== 'single') {
+          setSaquePlayerCount(2);
+          saquePlayerCountSetting = 2;
+          if (saquePlayerCount === 2) {
+            setSaquePlayerCount(1);
+            saquePlayerCountSetting = 1;
+          } else {
+            setSaqueTeamSide(saqueTeamSide === 'top' ? 'bottom' : 'top');
+            saqueTeamSideSetting = saqueTeamSide === 'top' ? 'bottom' : 'top';
+          }
+        }
+      }
+    } else {
+      if (countSaque > 1) {
+        setCountSaque(countSaque - 1);
+        countSaqueSetting = countSaque - 1;
+        if (countSaque % 2 !== 0) {
+          setSaqueSide(saqueSide === 'left' ? 'right' : 'left');
+          saqueSideSetting = saqueSide === 'left' ? 'right' : 'left';
+          if (gameData?.gameType !== 'single') {
+            setSaquePlayerCount(1);
+            saquePlayerCountSetting = 1;
+            if (saquePlayerCount === 1) {
+              setSaquePlayerCount(2);
+              saquePlayerCountSetting = 2;
+            } else {
+              setSaqueTeamSide(saqueTeamSide === 'top' ? 'bottom' : 'top');
+              saqueTeamSideSetting = saqueTeamSide === 'top' ? 'bottom' : 'top';
+            }
+          }
+        }
+      }
+    }
+    updateSaqueSettings({
+      countSaqueSetting,
+      saquePlayerCountSetting,
+      saqueSideSetting,
+      saqueTeamSideSetting,
+    });
+  };
+
   const handlePoints = (team, type) => {
     setPointId(pointId + 1);
     const operatorValue = type === 'add' ? +1 : -1;
     if (team === 'left') {
       if (leftTeamScore > 0 || type === 'add') {
+        handleSaqueSide(type);
         const newScore = leftTeamScore + operatorValue;
         updateScore(team, newScore);
         saveSumula({
@@ -156,6 +315,7 @@ const ScoreBoard = ({route, navigation}) => {
       return null;
     }
     if (rightTeamScore > 0 || type === 'add') {
+      handleSaqueSide(type);
       const newScore = rightTeamScore + operatorValue;
       updateScore(team, newScore);
       saveSumula({
@@ -169,19 +329,56 @@ const ScoreBoard = ({route, navigation}) => {
   };
 
   const renderScore = team => {
+    let topSide;
+
+    let bottomSide;
+
+    if (gameData?.gameType === 'single') {
+      bottomSide =
+        saqueSide === team ||
+        (saqueSide?.length === 0 && gameData?.startSide === team);
+    } else {
+      topSide =
+        saqueSide === team ||
+        (saqueSide?.length === 0 && gameData?.startSide === team);
+      bottomSide =
+        saqueSide === team ||
+        (saqueSide?.length === 0 && gameData?.startSide === team);
+    }
+
     return (
       <View style={styles.numberContainer}>
+        <View style={styles.topRaquetContainer}>
+          {topSide && saqueTeamSide === 'top' && <Raquet />}
+        </View>
         <TouchableOpacity
           style={styles.addPoint}
-          onPress={() => handlePoints(team, 'add')}
+          onPress={() => {
+            handlePoints(team, 'add');
+            setDisableToClick(true);
+            setTimeout(() => {
+              setDisableToClick(false);
+            }, 200);
+          }}
+          disabled={disableToClick}
         />
         <TouchableOpacity
           style={styles.removePoint}
-          onPress={() => handlePoints(team, 'remove')}
+          onPress={() => {
+            handlePoints(team, 'remove');
+            setDisableToClick(true);
+            setTimeout(() => {
+              setDisableToClick(false);
+            }, 200);
+          }}
+          disabled={disableToClick}
         />
         <Text style={styles.scoreNumber} numberOfLines={1}>
           {team === 'right' ? rightTeamScore : leftTeamScore}
         </Text>
+        <View style={styles.bottomRaquetContainer}>
+          {bottomSide && saqueTeamSide === 'bottom' && <Raquet />}
+        </View>
       </View>
     );
   };
@@ -274,37 +471,43 @@ const ScoreBoard = ({route, navigation}) => {
 
   return (
     <>
-      {!isPortrait ? (
+      {!isPortrait && !loadingData ? (
         <View style={styles.container}>
           {renderMenus()}
           <View style={styles.scoreBoard}>
             <View style={styles.infoContainer}>
               <Text style={styles.playerName} numberOfLines={1}>
-                Fernando
+                {gameData?.leftPlayers.player1}
               </Text>
               {renderScore('left')}
-              <Text style={styles.playerName} numberOfLines={1}>
-                Lucas
-              </Text>
+              {gameData?.gameType !== 'single' && (
+                <Text style={styles.playerName} numberOfLines={1}>
+                  {gameData?.leftPlayers.player2}
+                </Text>
+              )}
             </View>
             <View style={styles.gameInfoContainer}>
-              <Text style={styles.gameInfo}>{`Game ${game}`}</Text>
-              <Text style={styles.gameInfo}>{gameTime.format('mm:ss')}</Text>
+              <Text style={styles.gameInfo}>{`Game ${gameData?.game}`}</Text>
+              <Text style={styles.gameInfo}>
+                {gameData && gameTime?.format('mm:ss')}
+              </Text>
             </View>
             <View style={styles.infoContainer}>
               <Text style={styles.playerName} numberOfLines={1}>
-                Pedro
+                {gameData?.rightPlayers.player1}
               </Text>
               {renderScore('right')}
-              <Text style={styles.playerName} numberOfLines={1}>
-                Mateus
-              </Text>
+              {gameData?.gameType !== 'single' && (
+                <Text style={styles.playerName} numberOfLines={1}>
+                  {gameData?.rightPlayers.player2}
+                </Text>
+              )}
             </View>
           </View>
           <View style={styles.timeContainer}>
             <GameTime height={30} width={30} />
             <Text style={styles.gameTimer}>
-              {totalGameTime.format('HH:mm:ss')}
+              {gameData && totalGameTime?.format('HH:mm:ss')}
             </Text>
           </View>
           {renderModal()}
