@@ -11,9 +11,11 @@ const RootStack = () => {
   const {user} = useSelector(({auth}) => auth);
 
   useEffect(() => {
-    console.log(user);
+    console.log('user>:', user);
     if (user) {
       setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
     }
   }, [user]);
 

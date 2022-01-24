@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './styles';
 import Button from '../../../components/Button';
@@ -9,6 +9,8 @@ import {Controller, useForm} from 'react-hook-form';
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import firebase from 'firebase';
+import {useDispatch} from 'react-redux';
+import {Creators as AuthActions} from '../../../store/ducks/auth';
 
 const schema = yup.object().shape({
   email: yup.string(),
@@ -17,6 +19,7 @@ const schema = yup.object().shape({
 });
 
 const SignUp = ({navigation}) => {
+  const dispatch = useDispatch();
   const {
     handleSubmit,
     formState: {errors},
@@ -28,8 +31,10 @@ const SignUp = ({navigation}) => {
       password: '',
     },
   });
+  const [loading, setLoading] = useState();
 
   const onSubmit = async values => {
+    setLoading(true);
     const {email, password, name} = values;
     await firebase
       .auth()
@@ -38,7 +43,8 @@ const SignUp = ({navigation}) => {
       .catch(() => 'deu problema na criação');
 
     const user = firebase.auth().currentUser;
-    console.log(user);
+    dispatch(AuthActions.authSuccess(user));
+    setLoading(false);
   };
   return (
     <ScrollView style={styles.container}>
@@ -132,7 +138,11 @@ const SignUp = ({navigation}) => {
           <ErrorInput error={errors?.confirm_password?.message} />
         </View>
         <View style={styles.buttonContainer}>
-          <Button label="CADASTRAR" onPress={handleSubmit(onSubmit)} />
+          <Button
+            label={loading ? 'CARREGANDO...' : 'CADASTRAR'}
+            onPress={handleSubmit(onSubmit)}
+            disabled={loading}
+          />
         </View>
       </View>
     </ScrollView>

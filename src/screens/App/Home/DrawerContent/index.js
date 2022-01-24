@@ -2,43 +2,18 @@ import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import Plus from '../../../../assets/icons/plus.svg';
 import Back from '../../../../assets/icons/back.svg';
-import Edit from '../../../../assets/icons/edit.svg';
-import EditText from '../../../../assets/icons/editText.svg';
-import Restart from '../../../../assets/icons/restart.svg';
-import Results from '../../../../assets/icons/results.svg';
-import SchareScreen from '../../../../assets/icons/shareScreen.svg';
-import Settings from '../../../../assets/icons/settings.svg';
 import LogOff from '../../../../assets/icons/logoff.svg';
 import styles from './styles';
-
-// import { Container } from './styles';
+import {Creators as AuthActions} from '../../../../store/ducks/auth';
+import {useDispatch} from 'react-redux';
 
 const DrawerContent = ({navigation}) => {
+  const dispatch = useDispatch();
   const options = [
     {
       text: 'Nova Partida',
       icon: <Plus width={18} />,
-      action: () => console.log('nova partida'),
-    },
-    {
-      text: 'Reiniciar o placar',
-      icon: <Restart width={18} />,
-      action: () => console.log('reiniciar placar'),
-    },
-    {
-      text: 'Alterar nomes',
-      icon: <EditText width={18} />,
-      action: () => console.log('alterar nomes'),
-    },
-    {
-      text: 'Resultados Anteriores',
-      icon: <Results width={18} />,
-      action: () => console.log('resultados anteriores'),
-    },
-    {
-      text: 'Transmitir placar',
-      icon: <SchareScreen width={18} />,
-      action: () => console.log('transmitir placar'),
+      action: () => navigation.navigate('ChooseType'),
     },
   ];
 
@@ -65,15 +40,18 @@ const DrawerContent = ({navigation}) => {
           ))}
         </View>
         <View style={styles.settingsContainer}>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.backContainer}
             onPress={() => console.log('configurações')}>
             <Settings />
             <Text style={styles.text}>Configurações</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.backContainer}
-            onPress={() => console.log('sair')}>
+            onPress={() => {
+              dispatch(AuthActions.authSuccess(null));
+              // navigation.navigate('SignIn');
+            }}>
             <LogOff />
             <Text style={styles.logoff}>Sair</Text>
           </TouchableOpacity>

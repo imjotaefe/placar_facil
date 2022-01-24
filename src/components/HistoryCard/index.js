@@ -114,42 +114,49 @@ const HistoryCard = ({game, gameId, navigation}) => {
   };
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor:
-            gameType === 'pair' ? colors.weakBlue : colors.weakOrange,
-        },
-      ]}>
-      <View style={styles.top}>
-        <View style={styles.date}>
-          <Calender />
-          <Text style={styles.textDate}>{dateGame || '00/00/0000'}</Text>
-          <Timer style={styles.timer} />
-          <Text style={styles.textDate}>
-            {startGame || '00:00'} -{' '}
-            {startGame === endGame ? 'XX:XX' : endGame || '00:00'}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => {
-            setModalIsVisible(true);
-          }}>
-          <View style={styles.verticalDots}>
-            <VerticalDots />
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('Sumula', {
+          gameId,
+        })
+      }>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor:
+              gameType === 'pair' ? colors.weakBlue : colors.weakOrange,
+          },
+        ]}>
+        <View style={styles.top}>
+          <View style={styles.date}>
+            <Calender />
+            <Text style={styles.textDate}>{dateGame || '00/00/0000'}</Text>
+            <Timer style={styles.timer} />
+            <Text style={styles.textDate}>
+              {startGame || '00:00'} -{' '}
+              {startGame === endGame ? 'XX:XX' : endGame || '00:00'}
+            </Text>
           </View>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setModalIsVisible(true);
+            }}>
+            <View style={styles.verticalDots}>
+              <VerticalDots />
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.playersContainer}>
+          {renderPlayerOne()}
+          <Text style={styles.score}>
+            {leftPlayers?.finalGame} X {rightPlayers?.finalGame}
+          </Text>
+          {renderPlayerTwo()}
+        </View>
+        {renderModal()}
       </View>
-      <View style={styles.playersContainer}>
-        {renderPlayerOne()}
-        <Text style={styles.score}>
-          {leftPlayers?.finalScore} X {rightPlayers?.finalScore}
-        </Text>
-        {renderPlayerTwo()}
-      </View>
-      {renderModal()}
-    </View>
+    </TouchableOpacity>
   );
 };
 

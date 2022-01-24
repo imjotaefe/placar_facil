@@ -51,7 +51,6 @@ const GameConfig = ({navigation, route}) => {
     // console.log(selectedStart);
     // console.log(rightPlayers);
     // console.log(leftPlayers);
-    console.log('sdfsdf', dayjs.duration({hour: 0, minute: 0, seconds: 0}));
     console.log('-----------------');
     // console.log(data);
 
@@ -60,8 +59,8 @@ const GameConfig = ({navigation, route}) => {
     const newGame = {
       gameType: type,
       startSide: selectedStart,
-      rightPlayers: {...rightPlayers, finalScore: 0},
-      leftPlayers: {...leftPlayers, finalScore: 0},
+      rightPlayers: {...rightPlayers, finalScore: 0, finalGame: 0},
+      leftPlayers: {...leftPlayers, finalScore: 0, finalGame: 0},
       gameFinished: false,
       saqueSettings: {
         countSaque: 1,

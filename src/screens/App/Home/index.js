@@ -25,9 +25,10 @@ const Home = ({navigation}) => {
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <Search />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View />
         <Logo />
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Hamburguer />
