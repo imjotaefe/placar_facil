@@ -6,6 +6,7 @@ import LogOff from '../../../../assets/icons/logoff.svg';
 import styles from './styles';
 import {Creators as AuthActions} from '../../../../store/ducks/auth';
 import {useDispatch} from 'react-redux';
+// import firebase from 'firebase';
 
 const DrawerContent = ({navigation}) => {
   const dispatch = useDispatch();
@@ -49,7 +50,11 @@ const DrawerContent = ({navigation}) => {
           <TouchableOpacity
             style={styles.backContainer}
             onPress={() => {
-              dispatch(AuthActions.authSuccess(null));
+              console.log('teste');
+              // firebase
+              //   .auth()
+              //   .signOut()
+              //   .then(() => dispatch(AuthActions.authSuccess(null)));
               // navigation.navigate('SignIn');
             }}>
             <LogOff />

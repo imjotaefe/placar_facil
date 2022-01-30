@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
     paddingVertical: 18,
     marginHorizontal: 8,
+    minWidth: 65,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   gameButtonText: {
     fontWeight: 'bold',
@@ -95,6 +98,9 @@ const styles = StyleSheet.create({
   },
   players: {
     margin: 10,
+  },
+  playerText: {
+    fontWeight: 'bold',
   },
   selectGame: {
     fontWeight: 'bold',

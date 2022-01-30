@@ -3,25 +3,39 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AuthStack from './Auth';
 import AppStack from './App';
 import {useSelector} from 'react-redux';
+import firebase from 'firebase';
+import LoadingScreen from '../screens/Loading';
 
 const Root = createStackNavigator();
 
 const RootStack = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {user} = useSelector(({auth}) => auth);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('user>:', user);
+    firebase.auth().onAuthStateChanged(fireUser => {
+      if (fireUser) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+      setTimeout(() => setIsLoading(false), 3000);
+    });
+
     if (user) {
       setIsLoggedIn(true);
     } else {
       setIsLoggedIn(false);
     }
+    setTimeout(() => setIsLoading(false), 3000);
   }, [user]);
 
   return (
     <Root.Navigator initialRouteName="AuthStack" headerMode="none">
-      {isLoggedIn ? (
+      {isLoading ? (
+        <Root.Screen name="LoadingScreen" component={LoadingScreen} />
+      ) : isLoggedIn ? (
         <Root.Screen name="AppStack" component={AppStack} />
       ) : (
         <Root.Screen name="AuthStack" component={AuthStack} />

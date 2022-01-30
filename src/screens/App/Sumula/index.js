@@ -6,9 +6,11 @@ import LeftArrow from '../../../assets/icons/left_arrow.svg';
 import colors from './../../../utils/colors';
 import PlayerOne from '../../../assets/icons/player_1.svg';
 import PlayerTwo from '../../../assets/icons/player_2.svg';
+import Graph from '../../../assets/icons/graph.svg';
 
 const Sumula = ({navigation, route}) => {
   const {gameId} = route.params;
+  console.log('gameId', gameId);
   const [gameData, setGameData] = useState(null);
   const [gameSelected, setGameSelected] = useState(1);
 
@@ -27,17 +29,25 @@ const Sumula = ({navigation, route}) => {
         <View style={styles.playersTeamContainer}>
           <PlayerOne width={25} height={25} />
           <View style={styles.players}>
-            <Text>{gameData?.leftPlayers?.player1}</Text>
+            <Text style={styles.playerText}>
+              {gameData?.leftPlayers?.player1}
+            </Text>
             {gameData?.leftPlayers?.player2 && (
-              <Text>{gameData?.leftPlayers?.player2} </Text>
+              <Text style={styles.playerText}>
+                {gameData?.leftPlayers?.player2}{' '}
+              </Text>
             )}
           </View>
         </View>
         <View style={styles.playersTeamContainer}>
           <View style={styles.players}>
-            <Text>{gameData?.rightPlayers?.player1}</Text>
+            <Text style={styles.playerText}>
+              {gameData?.rightPlayers?.player1}
+            </Text>
             {gameData?.rightPlayers?.player2 && (
-              <Text>{gameData?.rightPlayers?.player2} </Text>
+              <Text style={styles.playerText}>
+                {gameData?.rightPlayers?.player2}{' '}
+              </Text>
             )}
           </View>
           <PlayerTwo width={25} height={25} />
@@ -48,7 +58,7 @@ const Sumula = ({navigation, route}) => {
 
   const renderGames = () => {
     if (gameData) {
-      const games = new Array(Number(gameData?.bestOf)).fill(1);
+      const games = new Array(Number(gameData?.game - 1)).fill(1);
 
       return (
         <View style={styles.gameButtonContainer}>
@@ -120,7 +130,10 @@ const Sumula = ({navigation, route}) => {
         <View style={styles.textHeaderContainer}>
           <Text style={styles.title}>SUMULA</Text>
         </View>
-        <View style={styles.emptyContainer} />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Graph', {gameData})}>
+          <Graph />
+        </TouchableOpacity>
       </View>
       {renderPlayers()}
       {renderGames()}

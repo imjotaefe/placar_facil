@@ -109,7 +109,20 @@ const ScoreBoard = ({route, navigation}) => {
   }, [pointId, isBestOfTwo]);
 
   useEffect(() => {
-    if (game === Number(gameData?.bestOf) + 1) {
+    const {currentUser} = auth;
+    console.log(gameData?.rightPlayers?.finalGame);
+    let gameDataOfThisGame;
+    database
+      .ref(`/umpires/${currentUser.uid}/games/${gameId}`)
+      .on('value', snapshot => {
+        gameDataOfThisGame = snapshot.val();
+      });
+    if (
+      Number(gameDataOfThisGame?.rightPlayers?.finalGame) ===
+        Number(gameData?.bestOf) ||
+      Number(gameDataOfThisGame?.leftPlayers?.finalGame) ===
+        Number(gameData?.bestOf)
+    ) {
       alert('Fim de jogo');
     }
   }, [game]);

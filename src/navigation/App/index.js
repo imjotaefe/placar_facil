@@ -7,6 +7,7 @@ import TypeNames from '../../screens/App/CreateNewGame/TypeNames';
 import SortSide from '../../screens/App/CreateNewGame/SortSide';
 import GameConfig from '../../screens/App/CreateNewGame/GameConfig';
 import Sumula from '../../screens/App/Sumula';
+import Graph from '../../screens/App/Sumula/Graph';
 
 const Stack = createStackNavigator();
 
@@ -20,6 +21,7 @@ const AppStack = () => {
       <Stack.Screen name="GameConfig" component={GameConfig} />
       <Stack.Screen name="ScoreBoard" component={ScoreDrawer} />
       <Stack.Screen name="Sumula" component={Sumula} />
+      <Stack.Screen name="Graph" component={Graph} />
     </Stack.Navigator>
   );
 };
