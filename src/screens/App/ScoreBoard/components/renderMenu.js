@@ -8,7 +8,13 @@ import CastNotConnected from '../../../../assets/icons/castNotConnected.svg';
 import Play from '../../../../assets/icons/play.svg';
 import styles from './styles';
 
-const renderMenu = ({navigation, setIsPaused, isPaused, setModalIsVisible}) => {
+const renderMenu = ({
+  navigation,
+  setIsPaused,
+  isPaused,
+  setModalIsVisible,
+  resetTimer,
+}) => {
   return (
     <>
       <TouchableOpacity
@@ -17,17 +23,18 @@ const renderMenu = ({navigation, setIsPaused, isPaused, setModalIsVisible}) => {
         <Hamburguer height={30} width={30} />
       </TouchableOpacity>
       <View style={styles.rightMenu}>
-        <View style={styles.button}>
+        {/* <View style={styles.button}>
           <TouchableOpacity
             onPress={() => console.log('oi')}
             style={styles.bigButton}>
             <CastNotConnected height={25} width={25} />
           </TouchableOpacity>
           <Text style={styles.buttonLabel}>Transmitir</Text>
-        </View>
+        </View> */}
         <View style={styles.button}>
           <TouchableOpacity
-            onPress={() => setIsPaused(!isPaused)}
+            // onPress={() => setIsPaused(!isPaused)}
+            onPress={() => resetTimer()}
             style={styles.smallButton}>
             {isPaused ? (
               <Play

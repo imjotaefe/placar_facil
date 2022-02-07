@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   shareButton: {
-    marginTop: 10,
     borderRadius: 8,
     backgroundColor: colors.white,
     borderWidth: 3,
@@ -142,6 +141,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 28,
     paddingVertical: 11,
+    marginTop: 30,
   },
   buttonTextShare: {
     fontWeight: 'bold',

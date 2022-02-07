@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import PlayerOne from '../../../../assets/icons/player_1.svg';
 import Pair from '../../../../assets/icons/pair.svg';
 import DropShadow from 'react-native-drop-shadow';
@@ -61,7 +61,7 @@ const ChooseType = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Header hasBack text="TIPO DA PARTIDA" navigation={navigation} />
       <View>
         <TouchableOpacity onPress={() => setSelected('single')}>
@@ -83,7 +83,7 @@ const ChooseType = ({navigation}) => {
           />
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

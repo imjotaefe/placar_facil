@@ -216,6 +216,18 @@ const styles = StyleSheet.create({
     top: 5,
     right: 5,
   },
+  lottieContainer: {
+    flexDirection: 'column',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.white,
+  },
+  rotateText: {
+    color: colors.darkgray,
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
 });
 
 export default styles;

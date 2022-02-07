@@ -10,7 +10,7 @@ const ScoreDrawer = () => {
     <Drawer.Navigator
       initialRouteName="ScoreBoard"
       drawerPosition="left"
-      drawerStyle={{width: '30%'}}
+      drawerStyle={{width: '80%'}}
       drawerContent={({navigation}) => (
         <ScoreDrawerContent navigation={navigation} />
       )}>

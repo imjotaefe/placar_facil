@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   buttonContainer: {
-    marginTop: 65,
+    marginVertical: 65,
   },
 });
 

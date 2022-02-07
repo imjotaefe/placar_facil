@@ -5,22 +5,14 @@ dayjs.extend(duration);
 var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 
-const updateTimeConfig = async ({timer, setTimeConfig, timeConfig, gameId}) => {
-  timer = setTimeout(async () => {
-    await updateGameData({
-      data: {
-        totalGameTime: timeConfig?.totalGameTime?.format('HH:mm:ss'),
-        gameTime: timeConfig?.gameTime?.format('mm:ss'),
-      },
-      gameId,
-    });
-    setTimeConfig({
-      gameTime: timeConfig?.gameTime?.add(1, 'seconds'),
-      totalGameTime: timeConfig?.totalGameTime?.add(1, 'seconds'),
-    });
-  }, 1000);
-
-  return timer && true;
+const updateTimeConfig = async ({timeConfig, gameId}) => {
+  await updateGameData({
+    data: {
+      totalGameTime: timeConfig?.totalGameTime?.format('HH:mm:ss'),
+      gameTime: timeConfig?.gameTime?.format('mm:ss'),
+    },
+    gameId,
+  });
 };
 
 const handleSide = ({
@@ -39,6 +31,7 @@ const handleSide = ({
   setIsChangingGame,
   gameId,
   timeConfig,
+  resetTimer,
 }) => {
   if (!isBestOfTwo) {
     if (newScore === Number(gameData?.stopOn)) {
@@ -52,6 +45,7 @@ const handleSide = ({
         gameId,
         side,
         timeConfig,
+        resetTimer,
       });
     }
   }
@@ -68,6 +62,7 @@ const handleSide = ({
         setLoadingData,
         setIsChangingGame,
         timeConfig,
+        resetTimer,
       });
     }
     if (gameData && side === 'left' && newScore - 2 === rightTeamScore) {
@@ -82,6 +77,7 @@ const handleSide = ({
         setLoadingData,
         setIsChangingGame,
         timeConfig,
+        resetTimer,
       });
     }
   }
@@ -98,10 +94,11 @@ const changeSides = async ({
   gameId,
   timeConfig,
   side,
+  resetTimer,
 }) => {
   setLeftTeamScore(0);
   setRightTeamScore(0);
-  setIsChangingGame(true);
+  resetTimer();
 
   var pastGame;
   const {currentUser} = auth;

@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     color: colors.red,
   },
   buttonContainer: {
-    marginTop: 40,
+    marginVertical: 40,
   },
   text: {
     fontWeight: 'bold',

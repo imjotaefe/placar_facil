@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Linking} from 'react-native';
 import Calender from '../../assets/icons/calendar.svg';
 import Timer from '../../assets/icons/timer.svg';
 import PlayerOne from '../../assets/icons/player_1.svg';
@@ -23,6 +23,10 @@ const HistoryCard = ({game, gameId, navigation}) => {
     .subtract(3, 'hours')
     .format('HH:mm');
   const dateGame = dayjs(sumula?.gameStartAt).format('DD/MM/YYYY');
+  const [numberToSendSumula, setNumberToSendSumula] = useState('PHONENUMBER');
+  const [sumulaText, setSumulaText] = useState(
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus. Loremsdfsdf sdfsdfsdfsdfsdf. ',
+  );
 
   const renderModal = () => {
     return (
@@ -53,14 +57,24 @@ const HistoryCard = ({game, gameId, navigation}) => {
             </View>
           ) : (
             <View style={styles.contentContainer}>
-              <Text style={styles.modalTitle}>O QUE DESEJA FAZER?</Text>
-              <Text style={styles.modalText}>Lorem ipsum dolor sit</Text>
-              <TouchableOpacity style={styles.tofileButton}>
+              <Text style={styles.modalTitle}>
+                Deseja exportar essa partida?
+              </Text>
+              <Text style={styles.modalText}>
+                Isso criará uma cópia da súmula.
+              </Text>
+              {/* <TouchableOpacity style={styles.tofileButton}>
                 <ToFile />
                 <Text style={styles.buttonTextToFile}>ARQUIVAR</Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
-              <TouchableOpacity style={styles.shareButton}>
+              <TouchableOpacity
+                style={styles.shareButton}
+                onPress={() =>
+                  Linking.openURL(
+                    `whatsapp://send?text=${sumulaText}&phone=${numberToSendSumula}&abid=${numberToSendSumula}`,
+                  )
+                }>
                 <Share />
                 <Text style={styles.buttonTextShare}>EXPORTAR</Text>
               </TouchableOpacity>

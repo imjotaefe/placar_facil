@@ -2,10 +2,8 @@ import React from 'react';
 import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import Plus from '../../../../assets/icons/plus.svg';
 import Back from '../../../../assets/icons/back.svg';
-import Edit from '../../../../assets/icons/edit.svg';
 import EditText from '../../../../assets/icons/editText.svg';
 import Restart from '../../../../assets/icons/restart.svg';
-import Settings from '../../../../assets/icons/settings.svg';
 import styles from './styles';
 
 const ScoreDrawerContent = ({navigation}) => {
@@ -13,7 +11,7 @@ const ScoreDrawerContent = ({navigation}) => {
     {
       text: 'Nova Partida',
       icon: <Plus width={18} />,
-      action: () => console.log('nova partida'),
+      action: () => navigation.navigate('ChooseType'),
     },
     {
       text: 'Reiniciar o placar',
@@ -25,11 +23,6 @@ const ScoreDrawerContent = ({navigation}) => {
       text: 'Alterar nomes',
       icon: <EditText width={18} />,
       action: () => console.log('alterar nomes'),
-    },
-    {
-      text: 'Configurações',
-      icon: <Settings width={18} />,
-      action: () => console.log('configurações'),
     },
   ];
 

@@ -9,6 +9,7 @@ import Raquet from '../../../../assets/icons/raquet.svg';
 import Button from '../../../../components/Button';
 import styles from './styles';
 import Header from '../../../../components/Header';
+import {ScrollView} from 'react-native';
 
 const SortSide = ({navigation, route}) => {
   const {type} = route.params;
@@ -104,66 +105,72 @@ const SortSide = ({navigation, route}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Header hasBack text="SORTEIO" navigation={navigation} />
-      <View>
-        <View style={styles.playersContainer}>
-          <Player color="orange" name={leftPlayers?.player1} side="top" />
-          {type === 'pair' && (
-            <>
-              <TouchableOpacity
-                style={{alignItems: 'center', flexDirection: 'row'}}
-                onPress={() =>
-                  setLeftPlayers({
-                    player1: leftPlayers?.player2,
-                    player2: leftPlayers?.player1,
-                  })
-                }>
-                <View style={styles.swapHorizontalContainer}>
-                  <SwapHorizontal />
-                </View>
-              </TouchableOpacity>
-              <Player color="orange" name={leftPlayers?.player2} side="top" />
-            </>
-          )}
-        </View>
-        <Table />
-        <View style={styles.playersContainer}>
-          <Player color="blue" name={rightPlayers?.player1} side="bottom" />
-          {type === 'pair' && (
-            <>
-              <TouchableOpacity
-                style={{alignItems: 'center', flexDirection: 'row'}}
-                onPress={() =>
-                  setRightPlayers({
-                    player1: rightPlayers?.player2,
-                    player2: rightPlayers?.player1,
-                  })
-                }>
-                <View style={styles.swapHorizontalContainer}>
-                  <SwapHorizontal />
-                </View>
-              </TouchableOpacity>
-              <Player color="blue" name={rightPlayers?.player2} side="bottom" />
-            </>
-          )}
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            label="CONTINUAR"
-            elevation
-            onPress={() =>
-              navigation.navigate('GameConfig', {
-                type,
-                selectedStart,
-                rightPlayers,
-                leftPlayers,
-              })
-            }
-          />
+    <ScrollView>
+      <View style={styles.container}>
+        <Header hasBack text="SORTEIO" navigation={navigation} />
+        <View>
+          <View style={styles.playersContainer}>
+            <Player color="orange" name={leftPlayers?.player1} side="top" />
+            {type === 'pair' && (
+              <>
+                <TouchableOpacity
+                  style={{alignItems: 'center', flexDirection: 'row'}}
+                  onPress={() =>
+                    setLeftPlayers({
+                      player1: leftPlayers?.player2,
+                      player2: leftPlayers?.player1,
+                    })
+                  }>
+                  <View style={styles.swapHorizontalContainer}>
+                    <SwapHorizontal />
+                  </View>
+                </TouchableOpacity>
+                <Player color="orange" name={leftPlayers?.player2} side="top" />
+              </>
+            )}
+          </View>
+          <Table />
+          <View style={styles.playersContainer}>
+            <Player color="blue" name={rightPlayers?.player1} side="bottom" />
+            {type === 'pair' && (
+              <>
+                <TouchableOpacity
+                  style={{alignItems: 'center', flexDirection: 'row'}}
+                  onPress={() =>
+                    setRightPlayers({
+                      player1: rightPlayers?.player2,
+                      player2: rightPlayers?.player1,
+                    })
+                  }>
+                  <View style={styles.swapHorizontalContainer}>
+                    <SwapHorizontal />
+                  </View>
+                </TouchableOpacity>
+                <Player
+                  color="blue"
+                  name={rightPlayers?.player2}
+                  side="bottom"
+                />
+              </>
+            )}
+          </View>
+          <View style={styles.buttonContainer}>
+            <Button
+              label="CONTINUAR"
+              elevation
+              onPress={() =>
+                navigation.navigate('GameConfig', {
+                  type,
+                  selectedStart,
+                  rightPlayers,
+                  leftPlayers,
+                })
+              }
+            />
+          </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

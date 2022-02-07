@@ -11,6 +11,8 @@ import {
 import styles from './styles';
 import GameTime from '../../../assets/icons/gameTime.svg';
 import Raquet from '../../../assets/icons/raquet.svg';
+import RotateAnimation from '../../../assets/lottie/rotate.json';
+import LoadingAnimation from '../../../assets/lottie/loading.json';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
 import {database, auth} from '../../../service/firebase';
@@ -24,6 +26,7 @@ import {
 } from '../../../utils/HandleGame';
 import renderMenu from './components/renderMenu';
 import renderModal from './components/renderModal';
+import LottieView from 'lottie-react-native';
 dayjs.extend(duration);
 var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
@@ -45,6 +48,7 @@ const ScoreBoard = ({route, navigation}) => {
   const [gameData, setGameData] = useState(null);
   const [game, setGame] = useState(null);
   const [pointId, setPointId] = useState(1);
+  const [isFinishedGame, setIsFinishedGame] = useState(false);
 
   const [saqueSettings, setSaqueSettings] = useState({
     countSaque: 1,
@@ -54,15 +58,16 @@ const ScoreBoard = ({route, navigation}) => {
   });
 
   const [disableToClick, setDisableToClick] = useState(false);
-  const [loadingData, setLoadingData] = useState(true);
+  const [loadingData, setLoadingData] = useState(false);
   const [isBestOfTwo, setIsBestOfTwo] = useState(false);
   const [isChangingGame, setIsChangingGame] = useState(false);
 
-  useEffect(() => {
+  useEffect(async () => {
+    setLoadingData(true);
     StatusBar?.setHidden(true);
-
     const {currentUser} = auth;
-    database
+
+    const response = await database
       .ref(`/umpires/${currentUser.uid}/games/${gameId}`)
       .once('value', data => {
         setGameData(data.val());
@@ -95,8 +100,11 @@ const ScoreBoard = ({route, navigation}) => {
           saqueTeamSide: data?.val()?.saqueSettings?.saqueTeamSide,
           saquePlayerCount: data?.val()?.saqueSettings?.saquePlayerCount,
         });
-        setLoadingData(false);
       });
+
+    if (response) {
+      setLoadingData(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -110,7 +118,6 @@ const ScoreBoard = ({route, navigation}) => {
 
   useEffect(() => {
     const {currentUser} = auth;
-    console.log(gameData?.rightPlayers?.finalGame);
     let gameDataOfThisGame;
     database
       .ref(`/umpires/${currentUser.uid}/games/${gameId}`)
@@ -123,47 +130,44 @@ const ScoreBoard = ({route, navigation}) => {
       Number(gameDataOfThisGame?.leftPlayers?.finalGame) ===
         Number(gameData?.bestOf)
     ) {
-      alert('Fim de jogo');
+      setIsPaused(true);
+      setIsFinishedGame(true);
+      setModalIsVisible(true);
     }
   }, [game]);
 
-  useEffect(async () => {
-    let timer;
-    if (isChangingGame) {
-      const updateTime = {
+  useEffect(() => {
+    if (gameData) {
+      if (
+        !loadingData &&
+        gameData &&
+        !isChangingGame &&
+        !isPaused &&
+        !isFinishedGame
+      ) {
+        setTimeout(() => {
+          setTimeConfig({
+            gameTime: timeConfig?.gameTime?.add(1, 'seconds'),
+            totalGameTime: timeConfig?.totalGameTime?.add(1, 'seconds'),
+          });
+        }, 1000);
+        setIsChangingGame(false);
+        updateTimeConfig({gameId, timeConfig});
+      }
+    }
+  }, [timeConfig, isChangingGame, loadingData, gameData]);
+
+  const resetTimer = () => {
+    setIsChangingGame(true);
+    setTimeout(() => {
+      setTimeConfig({
         ...timeConfig,
         gameTime: dayjs.duration({hour: 0, minute: 0, seconds: 0}),
-      };
-
-      await updateTimeConfig({
-        timer,
-        setTimeConfig,
-        timeConfig: updateTime,
-        gameId,
       });
-
-      setTimeout(() => {
-        setIsChangingGame(false);
-      }, 1000);
-    }
-  }, [isChangingGame]);
-
-  useEffect(async () => {
-    let timer;
-    if (!loadingData && gameData && !isChangingGame) {
-      if (!isPaused) {
-        await updateTimeConfig({
-          timer,
-          setTimeConfig,
-          timeConfig,
-          gameId,
-        });
-      }
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [isPaused, timeConfig]);
+      setIsChangingGame(false);
+      updateTimeConfig({gameId, timeConfig});
+    }, 2000);
+  };
 
   useEffect(() => {
     if (gameData?.gameType !== 'single' && gameData?.startSide === 'right') {
@@ -175,20 +179,25 @@ const ScoreBoard = ({route, navigation}) => {
   }, [gameData?.startSide]);
 
   useEffect(() => {
-    var timer = setTimeout(() => {
-      setDim(Dimensions.get('screen'));
-    }, 100);
-    return () => {
-      clearTimeout(timer);
-    };
-  });
+    Dimensions.addEventListener('change', ({window: {width, height}}) => {
+      setDim({width, height});
+    });
+  }, []);
 
   useEffect(() => {
     setIsPortrait(dim?.height >= dim?.width);
   }, [dim]);
 
+  useEffect(() => {
+    if (isPortrait) {
+      setIsPaused(true);
+    } else {
+      setIsPaused(false);
+    }
+  }, [isPortrait]);
+
   const handlePoints = (team, type) => {
-    if (isPaused) {
+    if (isPaused || isChangingGame || isFinishedGame) {
       return false;
     }
     setPointId(pointId + 1);
@@ -221,6 +230,7 @@ const ScoreBoard = ({route, navigation}) => {
           setIsChangingGame,
           gameId,
           timeConfig,
+          resetTimer,
         });
         return saveSumula({
           leftScore: newScore,
@@ -260,6 +270,7 @@ const ScoreBoard = ({route, navigation}) => {
         setIsChangingGame,
         gameId,
         timeConfig,
+        resetTimer,
       });
       return saveSumula({
         leftScore: leftTeamScore,
@@ -271,6 +282,29 @@ const ScoreBoard = ({route, navigation}) => {
       });
     }
     return null;
+  };
+
+  const renderRotate = () => {
+    return (
+      <View style={styles.lottieContainer}>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: 300,
+            height: 300,
+          }}>
+          <LottieView
+            source={loadingData ? LoadingAnimation : RotateAnimation}
+            autoPlay
+            loop
+          />
+        </View>
+        <Text style={styles.rotateText}>
+          {loadingData ? 'Carregando' : 'Rotacione o seu dispositivo'}
+        </Text>
+      </View>
+    );
   };
 
   const renderScore = team => {
@@ -305,7 +339,7 @@ const ScoreBoard = ({route, navigation}) => {
             setDisableToClick(true);
             setTimeout(() => {
               setDisableToClick(false);
-            }, 200);
+            }, 1000);
           }}
           disabled={disableToClick}
         />
@@ -317,7 +351,7 @@ const ScoreBoard = ({route, navigation}) => {
             setDisableToClick(true);
             setTimeout(() => {
               setDisableToClick(false);
-            }, 200);
+            }, 1000);
           }}
           disabled={disableToClick}
         />
@@ -335,7 +369,13 @@ const ScoreBoard = ({route, navigation}) => {
     <>
       {!isPortrait && !loadingData ? (
         <View style={styles.container}>
-          {renderMenu({navigation, setIsPaused, isPaused, setModalIsVisible})}
+          {renderMenu({
+            navigation,
+            setIsPaused,
+            isPaused,
+            setModalIsVisible,
+            resetTimer,
+          })}
           <View style={styles.scoreBoard}>
             <View style={styles.infoContainer}>
               <Text style={styles.playerName} numberOfLines={1}>
@@ -365,7 +405,9 @@ const ScoreBoard = ({route, navigation}) => {
             <View style={styles.gameInfoContainer}>
               <Text style={styles.gameInfo}>{`Game ${game}`}</Text>
               <Text style={styles.gameInfo}>
-                {gameData && timeConfig?.gameTime?.format('mm:ss')}
+                {timeConfig?.gameTime
+                  ? timeConfig?.gameTime?.format('mm:ss')
+                  : '00:00'}
               </Text>
             </View>
             <View style={styles.infoContainer}>
@@ -397,15 +439,21 @@ const ScoreBoard = ({route, navigation}) => {
           <View style={styles.timeContainer}>
             <GameTime height={30} width={30} />
             <Text style={styles.gameTimer}>
-              {gameData && timeConfig?.totalGameTime?.format('HH:mm:ss')}
+              {timeConfig?.totalGameTime
+                ? timeConfig?.totalGameTime?.format('HH:mm:ss')
+                : '00:00:00'}
             </Text>
           </View>
-          {renderModal({modalisVisible, setModalIsVisible, navigation, gameId})}
+          {renderModal({
+            isFinishedGame,
+            modalisVisible,
+            setModalIsVisible,
+            navigation,
+            gameId,
+          })}
         </View>
       ) : (
-        <View style={styles.portraitContainer}>
-          <Text>Use o celular no modo paisagem</Text>
-        </View>
+        renderRotate()
       )}
     </>
   );
