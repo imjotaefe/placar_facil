@@ -15,11 +15,7 @@ const RootStack = () => {
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged(fireUser => {
-      if (fireUser) {
-        setIsLoggedIn(true);
-      } else {
-        setIsLoggedIn(false);
-      }
+      setIsLoggedIn(!!fireUser);
       setTimeout(() => setIsLoading(false), 3000);
     });
 

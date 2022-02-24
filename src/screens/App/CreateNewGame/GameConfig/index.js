@@ -10,8 +10,8 @@ import * as yup from 'yup';
 import firebase from 'firebase';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration';
-dayjs.extend(duration);
 var relativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 const schema = yup.object().shape({
@@ -88,9 +88,9 @@ const GameConfig = ({navigation, route}) => {
       .ref(`/umpires/${currentUser.uid}/games`)
       .push(newGame)
       .then(newGame =>
-        navigation.navigate('ScoreBoard', {
-          screen: 'ScoreBoard',
-          params: {gameId: newGame.getKey()},
+        navigation.navigate('WarmUp', {
+          gameId: newGame.getKey(),
+          warmUp: data.heating,
         }),
       )
       .catch(() => console.log('erro ao salvar'));

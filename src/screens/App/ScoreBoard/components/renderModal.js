@@ -18,11 +18,11 @@ const renderModal = ({
         <Modal isVisible={modalisVisible} hasBackdrop={false}>
           <View style={styles.modal}>
             <View style={styles.closeContainer}>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 style={styles.closeButton}
                 onPress={() => setModalIsVisible(false)}>
                 <Close />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             <View style={styles.contentContainer}>
               <Text style={styles.modalTitle}>Fim de partida</Text>

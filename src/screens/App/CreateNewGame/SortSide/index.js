@@ -1,6 +1,12 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
 import PlayerOne from '../../../../assets/icons/player_1.svg';
 import PlayerTwo from '../../../../assets/icons/player_2.svg';
 import Swap from '../../../../assets/icons/swap.svg';
@@ -9,7 +15,6 @@ import Raquet from '../../../../assets/icons/raquet.svg';
 import Button from '../../../../components/Button';
 import styles from './styles';
 import Header from '../../../../components/Header';
-import {ScrollView} from 'react-native';
 
 const SortSide = ({navigation, route}) => {
   const {type} = route.params;
@@ -106,7 +111,11 @@ const SortSide = ({navigation, route}) => {
 
   return (
     <ScrollView>
-      <View style={styles.container}>
+      <View
+        style={{
+          ...styles.container,
+          minHeight: Dimensions.get('window').height,
+        }}>
         <Header hasBack text="SORTEIO" navigation={navigation} />
         <View>
           <View style={styles.playersContainer}>

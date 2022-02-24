@@ -8,6 +8,7 @@ import SortSide from '../../screens/App/CreateNewGame/SortSide';
 import GameConfig from '../../screens/App/CreateNewGame/GameConfig';
 import Sumula from '../../screens/App/Sumula';
 import Graph from '../../screens/App/Sumula/Graph';
+import WarmUp from './../../screens/App/CreateNewGame/WarmUp/index';
 
 const Stack = createStackNavigator();
 
@@ -22,6 +23,7 @@ const AppStack = () => {
       <Stack.Screen name="ScoreBoard" component={ScoreDrawer} />
       <Stack.Screen name="Sumula" component={Sumula} />
       <Stack.Screen name="Graph" component={Graph} />
+      <Stack.Screen name="WarmUp" component={WarmUp} />
     </Stack.Navigator>
   );
 };
