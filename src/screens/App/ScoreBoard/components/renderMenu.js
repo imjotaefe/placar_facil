@@ -13,6 +13,7 @@ const renderMenu = ({
   setIsPaused,
   isPaused,
   setModalIsVisible,
+  setPauseModalIsVisible,
   resetTimer,
 }) => {
   return (
@@ -33,8 +34,10 @@ const renderMenu = ({
         </View> */}
         <View style={styles.button}>
           <TouchableOpacity
-            // onPress={() => setIsPaused(!isPaused)}
-            onPress={() => resetTimer()}
+            onPress={() => {
+              setIsPaused(!isPaused);
+              setPauseModalIsVisible(true);
+            }}
             style={styles.smallButton}>
             {isPaused ? (
               <Play

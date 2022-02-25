@@ -32,9 +32,11 @@ const handleSide = ({
   gameId,
   timeConfig,
   resetTimer,
+  setPauseBetweenGames,
 }) => {
   if (!isBestOfTwo) {
     if (newScore === Number(gameData?.stopOn)) {
+      setPauseBetweenGames(true);
       return changeSides({
         game,
         setGame,

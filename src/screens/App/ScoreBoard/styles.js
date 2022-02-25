@@ -228,6 +228,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
   },
+  pauseContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pauseCounter: {
+    fontSize: 150,
+    color: colors.darkgray,
+    fontWeight: 'bold',
+  },
+  pauseLabel: {
+    fontSize: 20,
+    color: colors.darkgray,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

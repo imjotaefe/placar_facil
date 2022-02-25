@@ -27,6 +27,7 @@ import {
 import renderMenu from './components/renderMenu';
 import renderModal from './components/renderModal';
 import LottieView from 'lottie-react-native';
+import pauseModal from './components/pauseModal';
 dayjs.extend(duration);
 var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
@@ -49,6 +50,10 @@ const ScoreBoard = ({route, navigation}) => {
   const [game, setGame] = useState(null);
   const [pointId, setPointId] = useState(1);
   const [isFinishedGame, setIsFinishedGame] = useState(false);
+  const [pauseModalIsVisible, setPauseModalIsVisible] = useState(false);
+  const [pauseBetweenGames, setPauseBetweenGames] = useState(false);
+  const [pauseBetweenGamesNumber, setPauseBetweenGamesNumber] = useState(false);
+  const [pauseNumber, setPauseNumber] = useState(false);
 
   const [saqueSettings, setSaqueSettings] = useState({
     countSaque: 1,
@@ -91,6 +96,8 @@ const ScoreBoard = ({route, navigation}) => {
           gameTime: gameTimeConfig,
           totalGameTime: totalGameTimeConfig,
         });
+        setPauseBetweenGamesNumber(data?.val()?.pause);
+        setPauseNumber(data?.val()?.pause);
         setGame(data?.val()?.game);
         setRightTeamScore(data?.val()?.rightPlayers?.finalScore);
         setLeftTeamScore(data?.val()?.leftPlayers?.finalScore);
@@ -117,6 +124,19 @@ const ScoreBoard = ({route, navigation}) => {
   }, [pointId, isBestOfTwo]);
 
   useEffect(() => {
+    if (gameData && pauseBetweenGames) {
+      if (pauseBetweenGamesNumber === 1) {
+        setPauseBetweenGames(false);
+        setPauseBetweenGamesNumber(pauseNumber);
+      } else {
+        setTimeout(() => {
+          setPauseBetweenGamesNumber(pauseBetweenGamesNumber - 1);
+        }, 1000);
+      }
+    }
+  }, [pauseBetweenGames, pauseBetweenGamesNumber]);
+
+  useEffect(() => {
     const {currentUser} = auth;
     let gameDataOfThisGame;
     database
@@ -130,6 +150,7 @@ const ScoreBoard = ({route, navigation}) => {
       Number(gameDataOfThisGame?.leftPlayers?.finalGame) ===
         Number(gameData?.bestOf)
     ) {
+      setPauseBetweenGames(false);
       setIsPaused(true);
       setIsFinishedGame(true);
       setModalIsVisible(true);
@@ -142,6 +163,7 @@ const ScoreBoard = ({route, navigation}) => {
         !loadingData &&
         gameData &&
         !isChangingGame &&
+        !pauseBetweenGames &&
         !isPaused &&
         !isFinishedGame
       ) {
@@ -155,7 +177,14 @@ const ScoreBoard = ({route, navigation}) => {
         updateTimeConfig({gameId, timeConfig});
       }
     }
-  }, [timeConfig, isChangingGame, loadingData, gameData]);
+  }, [
+    timeConfig,
+    isChangingGame,
+    loadingData,
+    gameData,
+    isPaused,
+    pauseBetweenGames,
+  ]);
 
   const resetTimer = () => {
     setIsChangingGame(true);
@@ -231,6 +260,7 @@ const ScoreBoard = ({route, navigation}) => {
           gameId,
           timeConfig,
           resetTimer,
+          setPauseBetweenGames,
         });
         return saveSumula({
           leftScore: newScore,
@@ -271,6 +301,7 @@ const ScoreBoard = ({route, navigation}) => {
         gameId,
         timeConfig,
         resetTimer,
+        setPauseBetweenGames,
       });
       return saveSumula({
         leftScore: leftTeamScore,
@@ -365,15 +396,24 @@ const ScoreBoard = ({route, navigation}) => {
     );
   };
 
-  return (
-    <>
-      {!isPortrait && !loadingData ? (
+  const handleRender = () => {
+    if (pauseBetweenGames) {
+      return (
+        <View style={styles.pauseContainer}>
+          <Text style={styles.pauseCounter}>{pauseBetweenGamesNumber}</Text>
+          <Text style={styles.pauseLabel}>Pausa entre os games</Text>
+        </View>
+      );
+    }
+    if (!isPortrait && !loadingData) {
+      return (
         <View style={styles.container}>
           {renderMenu({
             navigation,
             setIsPaused,
             isPaused,
             setModalIsVisible,
+            setPauseModalIsVisible,
             resetTimer,
           })}
           <View style={styles.scoreBoard}>
@@ -451,12 +491,21 @@ const ScoreBoard = ({route, navigation}) => {
             navigation,
             gameId,
           })}
+          {pauseModal({
+            pauseModalIsVisible,
+            setPauseModalIsVisible,
+            navigation,
+            gameId,
+            setIsPaused,
+          })}
         </View>
-      ) : (
-        renderRotate()
-      )}
-    </>
-  );
+      );
+    } else {
+      return renderRotate();
+    }
+  };
+
+  return <>{handleRender()}</>;
 };
 
 export default ScoreBoard;
