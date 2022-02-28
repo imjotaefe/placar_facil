@@ -65,10 +65,6 @@ const HistoryCard = ({game, gameId, navigation}) => {
               <Text style={styles.modalText}>
                 Isso criará uma cópia da súmula.
               </Text>
-              {/* <TouchableOpacity style={styles.tofileButton}>
-                <ToFile />
-                <Text style={styles.buttonTextToFile}>ARQUIVAR</Text>
-              </TouchableOpacity> */}
 
               <TouchableOpacity
                 style={styles.shareButton}

@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable no-sparse-arrays */
 import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, FlatList} from 'react-native';
@@ -29,9 +31,6 @@ const Home = ({navigation}) => {
   const renderHeader = () => {
     return (
       <View style={styles.header}>
-        {/* <TouchableOpacity>
-          <Search />
-        </TouchableOpacity> */}
         <View />
         <Logo />
         <TouchableOpacity onPress={() => navigation.openDrawer()}>

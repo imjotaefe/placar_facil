@@ -21,6 +21,7 @@ import {
   handleSaqueSide,
   handleSide,
   saveSumula,
+  updateGameData,
   updateScore,
   updateTimeConfig,
 } from '../../../utils/HandleGame';
@@ -54,19 +55,22 @@ const ScoreBoard = ({route, navigation}) => {
   const [pauseBetweenGames, setPauseBetweenGames] = useState(false);
   const [pauseBetweenGamesNumber, setPauseBetweenGamesNumber] = useState(false);
   const [pauseNumber, setPauseNumber] = useState(false);
-
+  const [technicalBreak, setTechnicalBreak] = useState(0);
+  const [healthCare, setHealthCare] = useState(0);
+  const [showTechnicalBreak, setShowTechnicalBreak] = useState(0);
+  const [showHealthCare, setShowHealthCare] = useState(0);
   const [saqueSettings, setSaqueSettings] = useState({
     countSaque: 1,
     saquePlayerCount: 1,
     saqueSide: 'left',
     saqueTeamSide: 'top',
   });
-
   const [disableToClick, setDisableToClick] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [isBestOfTwo, setIsBestOfTwo] = useState(false);
   const [isChangingGame, setIsChangingGame] = useState(false);
 
+  //load all data from the database once
   useEffect(async () => {
     setLoadingData(true);
     StatusBar?.setHidden(true);
@@ -98,6 +102,8 @@ const ScoreBoard = ({route, navigation}) => {
         });
         setPauseBetweenGamesNumber(data?.val()?.pause);
         setPauseNumber(data?.val()?.pause);
+        setTechnicalBreak(data?.val()?.technicalInterval);
+        setHealthCare(data?.val()?.medicalAssistence);
         setGame(data?.val()?.game);
         setRightTeamScore(data?.val()?.rightPlayers?.finalScore);
         setLeftTeamScore(data?.val()?.leftPlayers?.finalScore);
@@ -114,6 +120,7 @@ const ScoreBoard = ({route, navigation}) => {
     }
   }, []);
 
+  //set best of two
   useEffect(() => {
     if (
       rightTeamScore === Number(gameData?.stopOn) - 1 &&
@@ -123,6 +130,7 @@ const ScoreBoard = ({route, navigation}) => {
     }
   }, [pointId, isBestOfTwo]);
 
+  //set pause between games
   useEffect(() => {
     if (gameData && pauseBetweenGames) {
       if (pauseBetweenGamesNumber === 1) {
@@ -136,6 +144,7 @@ const ScoreBoard = ({route, navigation}) => {
     }
   }, [pauseBetweenGames, pauseBetweenGamesNumber]);
 
+  //check if the ended
   useEffect(() => {
     const {currentUser} = auth;
     let gameDataOfThisGame;
@@ -157,6 +166,7 @@ const ScoreBoard = ({route, navigation}) => {
     }
   }, [game]);
 
+  //update the game time
   useEffect(() => {
     if (gameData) {
       if (
@@ -186,6 +196,85 @@ const ScoreBoard = ({route, navigation}) => {
     pauseBetweenGames,
   ]);
 
+  //update health care time
+  useEffect(async () => {
+    if (pauseModalIsVisible && showHealthCare) {
+      if (healthCare === 1) {
+        setPauseModalIsVisible(false);
+        setShowHealthCare(false);
+        setIsPaused(false);
+      }
+      if (healthCare > 0) {
+        setTimeout(() => {
+          setHealthCare(healthCare - 1);
+        }, 1000);
+        await updateGameData({
+          data: {
+            medicalAssistence: healthCare,
+            usedMedicalAssistence:
+              gameData?.totalMedicalAssistence - healthCare,
+          },
+          gameId,
+        });
+      }
+    }
+  }, [pauseModalIsVisible, showHealthCare, healthCare]);
+
+  //update technical break time
+  useEffect(async () => {
+    if (pauseModalIsVisible && showTechnicalBreak) {
+      if (technicalBreak === 1) {
+        setPauseModalIsVisible(false);
+        setShowTechnicalBreak(false);
+        setIsPaused(false);
+      }
+      if (technicalBreak > 0) {
+        setTimeout(() => {
+          setTechnicalBreak(technicalBreak - 1);
+        }, 1000);
+        await updateGameData({
+          data: {
+            technicalInterval: technicalBreak,
+            usedThecnicalInterval:
+              gameData?.totalThecnicalInterval - technicalBreak,
+          },
+          gameId,
+        });
+      }
+    }
+  }, [pauseModalIsVisible, showTechnicalBreak, technicalBreak]);
+
+  //update start side
+  useEffect(() => {
+    if (gameData?.gameType !== 'single' && gameData?.startSide === 'right') {
+      setSaqueSettings({...saqueSettings, saqueTeamSide: 'bottom'});
+    }
+    if (gameData?.gameType === 'single') {
+      setSaqueSettings({...saqueSettings, saqueTeamSide: 'bottom'});
+    }
+  }, [gameData?.startSide]);
+
+  //update dimensions
+  useEffect(() => {
+    Dimensions.addEventListener('change', ({window: {width, height}}) => {
+      setDim({width, height});
+    });
+  }, []);
+
+  //update portrait
+  useEffect(() => {
+    setIsPortrait(dim?.height >= dim?.width);
+  }, [dim]);
+
+  //check if it is portrait
+  useEffect(() => {
+    if (isPortrait) {
+      setIsPaused(true);
+    } else {
+      setIsPaused(false);
+    }
+  }, [isPortrait]);
+
   const resetTimer = () => {
     setIsChangingGame(true);
     setTimeout(() => {
@@ -197,33 +286,6 @@ const ScoreBoard = ({route, navigation}) => {
       updateTimeConfig({gameId, timeConfig});
     }, 2000);
   };
-
-  useEffect(() => {
-    if (gameData?.gameType !== 'single' && gameData?.startSide === 'right') {
-      setSaqueSettings({...saqueSettings, saqueTeamSide: 'bottom'});
-    }
-    if (gameData?.gameType === 'single') {
-      setSaqueSettings({...saqueSettings, saqueTeamSide: 'bottom'});
-    }
-  }, [gameData?.startSide]);
-
-  useEffect(() => {
-    Dimensions.addEventListener('change', ({window: {width, height}}) => {
-      setDim({width, height});
-    });
-  }, []);
-
-  useEffect(() => {
-    setIsPortrait(dim?.height >= dim?.width);
-  }, [dim]);
-
-  useEffect(() => {
-    if (isPortrait) {
-      setIsPaused(true);
-    } else {
-      setIsPaused(false);
-    }
-  }, [isPortrait]);
 
   const handlePoints = (team, type) => {
     if (isPaused || isChangingGame || isFinishedGame) {
@@ -497,6 +559,12 @@ const ScoreBoard = ({route, navigation}) => {
             navigation,
             gameId,
             setIsPaused,
+            technicalBreak,
+            healthCare,
+            showTechnicalBreak,
+            showHealthCare,
+            setShowTechnicalBreak,
+            setShowHealthCare,
           })}
         </View>
       );

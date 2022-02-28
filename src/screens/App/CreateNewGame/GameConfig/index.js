@@ -46,14 +46,6 @@ const GameConfig = ({navigation, route}) => {
   });
 
   const onSubmit = data => {
-    console.log('-----------------');
-    // console.log(type);
-    // console.log(selectedStart);
-    // console.log(rightPlayers);
-    // console.log(leftPlayers);
-    console.log('-----------------');
-    // console.log(data);
-
     const dateOfTheGame = String(dayjs());
 
     const newGame = {
@@ -75,6 +67,10 @@ const GameConfig = ({navigation, route}) => {
         .duration({hour: 0, minute: 0, seconds: 0})
         .format('HH:mm:ss'),
       game: 1,
+      totalThecnicalInterval: data?.technicalInterval,
+      totalMedicalAssistence: data?.medicalAssistence,
+      usedThecnicalInterval: 0,
+      usedMedicalAssistence: 0,
       sumula: {
         gameStartAt: dateOfTheGame,
         gameFinishAt: dateOfTheGame,

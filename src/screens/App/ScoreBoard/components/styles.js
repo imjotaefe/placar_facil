@@ -208,6 +208,11 @@ const styles = StyleSheet.create({
     top: 5,
     right: 5,
   },
+  bigNumber: {
+    fontSize: 100,
+    color: colors.darkgray,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;
