@@ -12,9 +12,13 @@ import Share from '../../assets/icons/share.svg';
 import ToFile from '../../assets/icons/toFile.svg';
 import styles from './styles';
 import {colors} from '../../utils';
+import {useDispatch} from 'react-redux';
+import {Creators as ScoreBoardActions} from '../../store/ducks/scoreBoard';
+import {Creators as EmailActions} from '../../store/ducks/email';
 
 const HistoryCard = ({game, gameId, navigation}) => {
   const {gameType, rightPlayers, leftPlayers, sumula} = game;
+  const dispatch = useDispatch();
   const [modalisVisible, setModalIsVisible] = useState(false);
   const startGame = dayjs(sumula?.gameStartAt)
     .subtract(3, 'hours')
@@ -49,9 +53,9 @@ const HistoryCard = ({game, gameId, navigation}) => {
               <TouchableOpacity
                 style={styles.tofileButton}
                 onPress={() => {
+                  dispatch(ScoreBoardActions.setGameId(gameId));
                   navigation.navigate('ScoreBoard', {
                     screen: 'ScoreBoard',
-                    params: {gameId},
                   });
                 }}>
                 <Text style={styles.buttonTextToFile}>CONTINUAR</Text>
@@ -68,11 +72,9 @@ const HistoryCard = ({game, gameId, navigation}) => {
 
               <TouchableOpacity
                 style={styles.shareButton}
-                onPress={() =>
-                  Linking.openURL(
-                    `whatsapp://send?text=${sumulaText}&phone=${numberToSendSumula}&abid=${numberToSendSumula}`,
-                  )
-                }>
+                onPress={() => {
+                  dispatch(EmailActions.sendEmail(game));
+                }}>
                 <Share />
                 <Text style={styles.buttonTextShare}>EXPORTAR</Text>
               </TouchableOpacity>

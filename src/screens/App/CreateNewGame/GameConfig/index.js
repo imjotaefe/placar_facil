@@ -13,6 +13,8 @@ import duration from 'dayjs/plugin/duration';
 var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(duration);
 dayjs.extend(relativeTime);
+import {useDispatch, useSelector} from 'react-redux';
+import {Creators as ScoreBoardActions} from '../../../../store/ducks/scoreBoard';
 
 const schema = yup.object().shape({
   bestOf: yup.string().required('Campo Obrigatório'),
@@ -27,6 +29,8 @@ const schema = yup.object().shape({
 
 const GameConfig = ({navigation, route}) => {
   const {type, selectedStart, rightPlayers, leftPlayers} = route.params;
+  const dispatch = useDispatch();
+
   const {
     handleSubmit,
     formState: {errors},
@@ -71,6 +75,7 @@ const GameConfig = ({navigation, route}) => {
       totalMedicalAssistence: data?.medicalAssistence,
       usedThecnicalInterval: 0,
       usedMedicalAssistence: 0,
+      expediteSystem: false,
       sumula: {
         gameStartAt: dateOfTheGame,
         gameFinishAt: dateOfTheGame,
@@ -83,12 +88,12 @@ const GameConfig = ({navigation, route}) => {
       .database()
       .ref(`/umpires/${currentUser.uid}/games`)
       .push(newGame)
-      .then(newGame =>
+      .then(response => {
+        dispatch(ScoreBoardActions.setGameId(response.getKey()));
         navigation.navigate('WarmUp', {
-          gameId: newGame.getKey(),
           warmUp: data.heating,
-        }),
-      )
+        });
+      })
       .catch(() => console.log('erro ao salvar'));
   };
 

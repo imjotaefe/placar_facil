@@ -157,6 +157,8 @@ const styles = StyleSheet.create({
   modalText: {
     color: colors.darkgray,
     marginTop: 5,
+    marginHorizontal: 50,
+    textAlign: 'center',
   },
   tofileButton: {
     borderRadius: 8,

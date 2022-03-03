@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StatusBar,
   Dimensions,
+  Alert,
 } from 'react-native';
 import styles from './styles';
 import GameTime from '../../../assets/icons/gameTime.svg';
@@ -29,20 +30,20 @@ import renderMenu from './components/renderMenu';
 import renderModal from './components/renderModal';
 import LottieView from 'lottie-react-native';
 import pauseModal from './components/pauseModal';
+import expediteModal from './components/expediteModal';
+import {useDispatch, useSelector} from 'react-redux';
+import {Creators as ScoreBoardActions} from '../../../store/ducks/scoreBoard';
 dayjs.extend(duration);
 var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
 var customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat);
 
-const ScoreBoard = ({route, navigation}) => {
-  const {gameId} = route.params;
+const ScoreBoard = ({navigation}) => {
   const [timeConfig, setTimeConfig] = useState({
     gameTime: null,
     totalGameTime: null,
   });
-  const [leftTeamScore, setLeftTeamScore] = useState(0);
-  const [rightTeamScore, setRightTeamScore] = useState(0);
   const [modalisVisible, setModalIsVisible] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [dim, setDim] = useState();
@@ -69,12 +70,19 @@ const ScoreBoard = ({route, navigation}) => {
   const [loadingData, setLoadingData] = useState(false);
   const [isBestOfTwo, setIsBestOfTwo] = useState(false);
   const [isChangingGame, setIsChangingGame] = useState(false);
+  const [isExpediteSystem, setIsExpediteSystem] = useState(false);
+  const [isAbleExpediteSystem, setIsAbleExpediteSystem] = useState(true);
+  const [showExpediteModal, setShowExpediteModal] = useState(false);
+  const dispatch = useDispatch();
+  const {leftTeamScore, rightTeamScore, gameId} = useSelector(
+    ({scoreBoard}) => scoreBoard,
+  );
+  const {currentUser} = auth;
 
   //load all data from the database once
   useEffect(async () => {
     setLoadingData(true);
     StatusBar?.setHidden(true);
-    const {currentUser} = auth;
 
     const response = await database
       .ref(`/umpires/${currentUser.uid}/games/${gameId}`)
@@ -100,13 +108,20 @@ const ScoreBoard = ({route, navigation}) => {
           gameTime: gameTimeConfig,
           totalGameTime: totalGameTimeConfig,
         });
+        setIsExpediteSystem(data?.val()?.expediteSystem);
         setPauseBetweenGamesNumber(data?.val()?.pause);
         setPauseNumber(data?.val()?.pause);
         setTechnicalBreak(data?.val()?.technicalInterval);
         setHealthCare(data?.val()?.medicalAssistence);
         setGame(data?.val()?.game);
-        setRightTeamScore(data?.val()?.rightPlayers?.finalScore);
-        setLeftTeamScore(data?.val()?.leftPlayers?.finalScore);
+        dispatch(
+          ScoreBoardActions.setRightScore(
+            data?.val()?.rightPlayers?.finalScore,
+          ),
+        );
+        dispatch(
+          ScoreBoardActions.setLeftScore(data?.val()?.leftPlayers?.finalScore),
+        );
         setSaqueSettings({
           countSaque: data?.val()?.saqueSettings?.countSaque,
           saqueSide: data?.val()?.saqueSettings?.saqueSide,
@@ -146,7 +161,6 @@ const ScoreBoard = ({route, navigation}) => {
 
   //check if the ended
   useEffect(() => {
-    const {currentUser} = auth;
     let gameDataOfThisGame;
     database
       .ref(`/umpires/${currentUser.uid}/games/${gameId}`)
@@ -185,6 +199,9 @@ const ScoreBoard = ({route, navigation}) => {
         }, 1000);
         setIsChangingGame(false);
         updateTimeConfig({gameId, timeConfig});
+        if (!isExpediteSystem) {
+          checkAndStartExpediteSystem(false);
+        }
       }
     }
   }, [
@@ -194,7 +211,26 @@ const ScoreBoard = ({route, navigation}) => {
     gameData,
     isPaused,
     pauseBetweenGames,
+    isExpediteSystem,
   ]);
+
+  useEffect(async () => {
+    await updateGameData({
+      data: {
+        expediteSystem: isExpediteSystem,
+      },
+      gameId,
+    });
+  }, [isExpediteSystem]);
+
+  //check if is able to start expedite system
+  useEffect(() => {
+    if (leftTeamScore >= 9 && rightTeamScore >= 9) {
+      setIsAbleExpediteSystem(false);
+    } else {
+      setIsAbleExpediteSystem(true);
+    }
+  }, [leftTeamScore, rightTeamScore]);
 
   //update health care time
   useEffect(async () => {
@@ -275,6 +311,20 @@ const ScoreBoard = ({route, navigation}) => {
     }
   }, [isPortrait]);
 
+  const checkAndStartExpediteSystem = isFromTheBothPlayers => {
+    const time = dayjs(timeConfig.gameTime.format('mm:ss'), 'mm:ss');
+    const tenMinutes = dayjs('10:00', 'mm:ss');
+
+    if (time.isAfter(tenMinutes) || isFromTheBothPlayers) {
+      if (leftTeamScore <= 9 && rightTeamScore <= 9) {
+        setIsExpediteSystem(true);
+        setShowExpediteModal(true);
+      } else {
+        Alert.alert('Ação não permitida', 'Cada jogador já atingiu 9 pontos');
+      }
+    }
+  };
+
   const resetTimer = () => {
     setIsChangingGame(true);
     setTimeout(() => {
@@ -301,9 +351,10 @@ const ScoreBoard = ({route, navigation}) => {
           saqueSettings,
           gameId,
           gameData,
+          isExpediteSystem,
         });
         const newScore = leftTeamScore + operatorValue;
-        setLeftTeamScore(newScore);
+        dispatch(ScoreBoardActions.setLeftScore(newScore));
         updateScore({team, score: newScore, gameData, gameId});
         handleSide({
           newScore,
@@ -312,8 +363,6 @@ const ScoreBoard = ({route, navigation}) => {
           rightTeamScore,
           isBestOfTwo,
           setIsBestOfTwo,
-          setRightTeamScore,
-          setLeftTeamScore,
           gameData,
           setLoadingData,
           game,
@@ -323,6 +372,9 @@ const ScoreBoard = ({route, navigation}) => {
           timeConfig,
           resetTimer,
           setPauseBetweenGames,
+          setIsExpediteSystem,
+          isExpediteSystem,
+          dispatch,
         });
         return saveSumula({
           leftScore: newScore,
@@ -342,9 +394,10 @@ const ScoreBoard = ({route, navigation}) => {
         saqueSettings,
         gameId,
         gameData,
+        isExpediteSystem,
       });
       const newScore = rightTeamScore + operatorValue;
-      setRightTeamScore(newScore);
+      dispatch(ScoreBoardActions.setRightScore(newScore));
       updateScore({team, score: newScore, gameData, gameId});
       handleSide({
         newScore,
@@ -353,8 +406,6 @@ const ScoreBoard = ({route, navigation}) => {
         rightTeamScore,
         isBestOfTwo,
         setIsBestOfTwo,
-        setRightTeamScore,
-        setLeftTeamScore,
         gameData,
         setLoadingData,
         game,
@@ -364,6 +415,9 @@ const ScoreBoard = ({route, navigation}) => {
         timeConfig,
         resetTimer,
         setPauseBetweenGames,
+        setIsExpediteSystem,
+        isExpediteSystem,
+        dispatch,
       });
       return saveSumula({
         leftScore: leftTeamScore,
@@ -427,7 +481,6 @@ const ScoreBoard = ({route, navigation}) => {
         <TouchableOpacity
           style={styles.addPoint}
           onPress={() => {
-            console.log('side: ', team);
             handlePoints(team, 'add');
             setDisableToClick(true);
             setTimeout(() => {
@@ -439,7 +492,6 @@ const ScoreBoard = ({route, navigation}) => {
         <TouchableOpacity
           style={styles.removePoint}
           onPress={() => {
-            console.log('side: ', team);
             handlePoints(team, 'remove');
             setDisableToClick(true);
             setTimeout(() => {
@@ -470,6 +522,11 @@ const ScoreBoard = ({route, navigation}) => {
     if (!isPortrait && !loadingData) {
       return (
         <View style={styles.container}>
+          {isExpediteSystem && (
+            <View style={styles.acelerationContainer}>
+              <Text style={styles.acelerationText}>GAME ACELERADO</Text>
+            </View>
+          )}
           {renderMenu({
             navigation,
             setIsPaused,
@@ -477,6 +534,9 @@ const ScoreBoard = ({route, navigation}) => {
             setModalIsVisible,
             setPauseModalIsVisible,
             resetTimer,
+            checkAndStartExpediteSystem,
+            isAbleExpediteSystem,
+            isExpediteSystem,
           })}
           <View style={styles.scoreBoard}>
             <View style={styles.infoContainer}>
@@ -557,7 +617,6 @@ const ScoreBoard = ({route, navigation}) => {
             pauseModalIsVisible,
             setPauseModalIsVisible,
             navigation,
-            gameId,
             setIsPaused,
             technicalBreak,
             healthCare,
@@ -565,6 +624,10 @@ const ScoreBoard = ({route, navigation}) => {
             showHealthCare,
             setShowTechnicalBreak,
             setShowHealthCare,
+          })}
+          {expediteModal({
+            showExpediteModal,
+            setShowExpediteModal,
           })}
         </View>
       );

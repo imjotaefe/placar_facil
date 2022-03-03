@@ -5,8 +5,18 @@ import Back from '../../../../assets/icons/back.svg';
 import EditText from '../../../../assets/icons/editText.svg';
 import Restart from '../../../../assets/icons/restart.svg';
 import styles from './styles';
+import {useDispatch, useSelector} from 'react-redux';
+import {Creators as ScoreBoardActions} from '../../../../store/ducks/scoreBoard';
 
 const ScoreDrawerContent = ({navigation}) => {
+  const dispatch = useDispatch();
+
+  const resetScoreBoard = () => {
+    dispatch(ScoreBoardActions.setRightScore(0));
+    dispatch(ScoreBoardActions.setLeftScore(0));
+    navigation.closeDrawer();
+  };
+
   const options = [
     {
       text: 'Nova Partida',
@@ -16,7 +26,7 @@ const ScoreDrawerContent = ({navigation}) => {
     {
       text: 'Reiniciar o placar',
       icon: <Restart width={18} />,
-      action: () => console.log('reiniciar placar'),
+      action: () => resetScoreBoard(),
     },
 
     {

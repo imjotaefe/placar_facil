@@ -6,7 +6,7 @@ import {colors} from '../../../../utils';
 import ImageTenis from '../../../../assets/images/tableTenis.jpg';
 
 const WarmUp = ({navigation, route}) => {
-  const {warmUp, gameId} = route.params;
+  const {warmUp} = route.params;
   const [warmUpTime, setWarmUpTime] = useState(warmUp);
   const [started, setStarted] = useState(false);
 
@@ -25,7 +25,6 @@ const WarmUp = ({navigation, route}) => {
             onPress={() => {
               navigation.navigate('ScoreBoard', {
                 screen: 'ScoreBoard',
-                params: {gameId},
               });
             }}
             label="COMEÇAR JOGO"

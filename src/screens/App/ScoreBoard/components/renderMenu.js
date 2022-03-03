@@ -4,7 +4,7 @@ import {View, TouchableOpacity, Text} from 'react-native';
 import Hamburguer from '../../../../assets/icons/hamb.svg';
 import PauseGame from '../../../../assets/icons/pauseGame.svg';
 import FinishGame from '../../../../assets/icons/finishGame.svg';
-import CastNotConnected from '../../../../assets/icons/castNotConnected.svg';
+import Expedite from '../../../../assets/icons/expedite.svg';
 import Play from '../../../../assets/icons/play.svg';
 import styles from './styles';
 
@@ -15,6 +15,9 @@ const renderMenu = ({
   setModalIsVisible,
   setPauseModalIsVisible,
   resetTimer,
+  checkAndStartExpediteSystem,
+  isAbleExpediteSystem,
+  isExpediteSystem,
 }) => {
   return (
     <>
@@ -24,14 +27,16 @@ const renderMenu = ({
         <Hamburguer height={30} width={30} />
       </TouchableOpacity>
       <View style={styles.rightMenu}>
-        {/* <View style={styles.button}>
-          <TouchableOpacity
-            onPress={() => console.log('oi')}
-            style={styles.bigButton}>
-            <CastNotConnected height={25} width={25} />
-          </TouchableOpacity>
-          <Text style={styles.buttonLabel}>Transmitir</Text>
-        </View> */}
+        {isAbleExpediteSystem && !isExpediteSystem && (
+          <View style={styles.button}>
+            <TouchableOpacity
+              onPress={() => checkAndStartExpediteSystem(true)}
+              style={styles.bigButton}>
+              <Expedite height={25} width={25} />
+            </TouchableOpacity>
+            <Text style={styles.buttonLabel}>Aceleração</Text>
+          </View>
+        )}
         <View style={styles.button}>
           <TouchableOpacity
             onPress={() => {

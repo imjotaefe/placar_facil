@@ -243,6 +243,16 @@ const styles = StyleSheet.create({
     color: colors.darkgray,
     fontWeight: 'bold',
   },
+  acelerationContainer: {
+    padding: 5,
+    paddingHorizontal: 15,
+    backgroundColor: colors.red,
+    borderRadius: 50,
+  },
+  acelerationText: {
+    color: colors.white,
+    fontWeight: 'bold',
+  },
 });
 
 export default styles;

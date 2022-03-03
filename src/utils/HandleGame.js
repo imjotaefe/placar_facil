@@ -4,6 +4,12 @@ import duration from 'dayjs/plugin/duration';
 dayjs.extend(duration);
 var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
+import {Creators as ScoreBoardActions} from '../store/ducks/scoreBoard';
+
+const changeGame = (setPauseBetweenGames, setIsExpediteSystem) => {
+  setPauseBetweenGames(true);
+  setIsExpediteSystem(false);
+};
 
 const updateTimeConfig = async ({timeConfig, gameId}) => {
   await updateGameData({
@@ -23,8 +29,6 @@ const handleSide = ({
   isBestOfTwo,
   gameData,
   setIsBestOfTwo,
-  setRightTeamScore,
-  setLeftTeamScore,
   setLoadingData,
   game,
   setGame,
@@ -33,53 +37,60 @@ const handleSide = ({
   timeConfig,
   resetTimer,
   setPauseBetweenGames,
+  setIsExpediteSystem,
+  isExpediteSystem,
+  dispatch,
 }) => {
   if (!isBestOfTwo) {
+    console.log('newScore: ', newScore);
+    console.log('stop on', gameData?.stopOn);
     if (newScore === Number(gameData?.stopOn)) {
-      setPauseBetweenGames(true);
+      changeGame(setPauseBetweenGames, setIsExpediteSystem);
       return changeSides({
         game,
         setGame,
-        setRightTeamScore,
-        setLeftTeamScore,
         setLoadingData,
         setIsChangingGame,
         gameId,
         side,
         timeConfig,
         resetTimer,
+        isExpediteSystem,
+        dispatch,
       });
     }
   }
   if (isBestOfTwo) {
     if (gameData && side === 'right' && newScore - 2 === leftTeamScore) {
+      changeGame(setPauseBetweenGames, setIsExpediteSystem);
       setIsBestOfTwo(false);
       return changeSides({
         gameId,
         game,
         setGame,
-        setRightTeamScore,
-        setLeftTeamScore,
         side: 'right',
         setLoadingData,
         setIsChangingGame,
         timeConfig,
         resetTimer,
+        isExpediteSystem,
+        dispatch,
       });
     }
     if (gameData && side === 'left' && newScore - 2 === rightTeamScore) {
+      changeGame(setPauseBetweenGames, setIsExpediteSystem);
       setIsBestOfTwo(false);
       return changeSides({
         gameId,
         game,
         setGame,
-        setRightTeamScore,
-        setLeftTeamScore,
         side: 'left',
         setLoadingData,
         setIsChangingGame,
         timeConfig,
         resetTimer,
+        isExpediteSystem,
+        dispatch,
       });
     }
   }
@@ -88,18 +99,17 @@ const handleSide = ({
 
 const changeSides = async ({
   setGame,
-  setLeftTeamScore,
-  setRightTeamScore,
   game,
   setLoadingData,
-  setIsChangingGame,
   gameId,
   timeConfig,
   side,
   resetTimer,
+  isExpediteSystem,
+  dispatch,
 }) => {
-  setLeftTeamScore(0);
-  setRightTeamScore(0);
+  dispatch(ScoreBoardActions.setRightScore(0));
+  dispatch(ScoreBoardActions.setLeftScore(0));
   resetTimer();
 
   var pastGame;
@@ -118,6 +128,7 @@ const changeSides = async ({
       [`${game}`]: {
         ...pastGame.sumula[game],
         gameFinishedAt: timeConfig?.gameTime?.format('mm:ss'),
+        expediteSystemWasUsed: isExpediteSystem,
       },
     },
     leftPlayers: {
@@ -217,15 +228,17 @@ const handleSaqueSide = ({
   saqueSettings,
   gameId,
   gameData,
+  isExpediteSystem,
 }) => {
   let countSaqueSetting = saqueSettings?.countSaque;
   let saquePlayerCountSetting = saqueSettings?.saquePlayerCount;
   let saqueSideSetting = saqueSettings?.saqueSide;
   let saqueTeamSideSetting = saqueSettings?.saqueTeamSide;
+  const saqueValueDivisor = isExpediteSystem ? 1 : 2;
 
   if (type === 'add') {
     countSaqueSetting = saqueSettings?.countSaque + 1;
-    if (saqueSettings?.countSaque % 2 === 0) {
+    if (saqueSettings?.countSaque % saqueValueDivisor === 0) {
       saqueSideSetting = saqueSettings?.saqueSide === 'left' ? 'right' : 'left';
       if (gameData?.gameType !== 'single') {
         saquePlayerCountSetting = 2;
@@ -240,7 +253,7 @@ const handleSaqueSide = ({
   } else {
     if (saqueSettings?.countSaque > 1) {
       countSaqueSetting = saqueSettings?.countSaque - 1;
-      if (saqueSettings?.countSaque % 2 !== 0) {
+      if (saqueSettings?.countSaque % saqueValueDivisor !== 0) {
         saqueSideSetting =
           saqueSettings?.saqueSide === 'left' ? 'right' : 'left';
         if (gameData?.gameType !== 'single') {
