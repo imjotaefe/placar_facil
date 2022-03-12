@@ -4,19 +4,15 @@ import axios from 'axios';
 import {API_URL} from 'react-native-dotenv';
 
 function* sendEmail({payload}) {
-  console.log(payload);
   try {
-    const {status, data} = yield call(
-      axios.post,
-      `${API_URL}/sendEmail`,
-      payload,
-    );
+    const {status, data} = yield call(axios.post, `${API_URL}/sendEmail`, {
+      ...payload.game,
+      receiver: payload.data.email,
+    });
     if (status === 200) {
-      console.log(data);
       yield put(EmailActions.sendEmailSuccess());
     }
   } catch (err) {
-    console.log('não funcionou', err);
     yield put(EmailActions.sendEmailError());
   }
 }

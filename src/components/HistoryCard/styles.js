@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingBottom: 25,
     paddingTop: 10,
+    paddingHorizontal: 25,
   },
   closeContainer: {
     flexDirection: 'row',
@@ -115,6 +116,7 @@ const styles = StyleSheet.create({
   modalText: {
     color: colors.darkgray,
     marginTop: 5,
+    textAlign: 'center',
   },
   tofileButton: {
     marginTop: 35,
@@ -141,7 +143,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 28,
     paddingVertical: 11,
-    marginTop: 30,
+    marginTop: 50,
   },
   buttonTextShare: {
     fontWeight: 'bold',
@@ -151,6 +153,12 @@ const styles = StyleSheet.create({
   pairTwo: {
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
+  },
+  emailContent: {
+    flex: 0,
+    maxHeight: 80,
+    width: '100%',
+    marginVertical: 30,
   },
 });
 

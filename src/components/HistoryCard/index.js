@@ -9,12 +9,24 @@ import dayjs from 'dayjs';
 import Modal from 'react-native-modal';
 import Close from '../../assets/icons/close.svg';
 import Share from '../../assets/icons/share.svg';
-import ToFile from '../../assets/icons/toFile.svg';
 import styles from './styles';
 import {colors} from '../../utils';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {Creators as ScoreBoardActions} from '../../store/ducks/scoreBoard';
 import {Creators as EmailActions} from '../../store/ducks/email';
+import LottieView from 'lottie-react-native';
+import LoadingAnimation from '../../assets/lottie/loadingBall.json';
+import CheckAnimation from '../../assets/lottie/check.json';
+import ErrorAnimation from '../../assets/lottie/error.json';
+import Input from './../Input';
+import * as yup from 'yup';
+import {useForm, Controller} from 'react-hook-form';
+import {yupResolver} from '@hookform/resolvers/yup';
+import ErrorInput from './../ErrorInput/index';
+
+const schema = yup.object().shape({
+  email: yup.string().required('Campo Obrigatório'),
+});
 
 const HistoryCard = ({game, gameId, navigation}) => {
   const {gameType, rightPlayers, leftPlayers, sumula} = game;
@@ -29,10 +41,130 @@ const HistoryCard = ({game, gameId, navigation}) => {
   const dateGame = dayjs(sumula?.gameStartAt)
     .subtract(3, 'hours')
     .format('DD/MM/YYYY');
-  const [numberToSendSumula, setNumberToSendSumula] = useState('PHONENUMBER');
-  const [sumulaText, setSumulaText] = useState(
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus.Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi rhoncus risus vel finibus maximus. Nulla molestie vehicula faucibus. Nam mollis lacus eu tortor pulvinar, vel mollis neque bibendum. Quisque porta nulla erat, non sollicitudin nibh molestie nec. Quisque ex magna, porta ut porta vitae, pulvinar nec diam. Fusce vitae magna diam. Praesent ut imperdiet nisi. Cras a dapibus tellus. Loremsdfsdf sdfsdfsdfsdfsdf. ',
+  const {emailLoading, emailSuccess, emailError} = useSelector(
+    ({email}) => email,
   );
+
+  const {
+    handleSubmit,
+    formState: {errors},
+    control,
+    reset,
+  } = useForm({
+    resolver: yupResolver(schema),
+    defaultValues: {email: ''},
+  });
+
+  useEffect(() => {
+    dispatch(EmailActions.resetEmail());
+    reset();
+  }, [dispatch]);
+
+  const onSubmit = data => {
+    dispatch(EmailActions.sendEmail({game, data}));
+    reset();
+  };
+
+  const renderEmailContent = () => {
+    return (
+      <>
+        <View style={styles.emailContent}>
+          <Controller
+            control={control}
+            name="email"
+            defaultValue=""
+            render={({field: {onChange, value}}) => (
+              <Input
+                onChangeText={text => onChange(text)}
+                name={'email'}
+                value={value}
+                placeholder="Ex: placarfacil@email.com"
+                label={'Email'}
+                isEmail
+              />
+            )}
+          />
+          <ErrorInput error={errors?.email?.message} />
+        </View>
+        <TouchableOpacity
+          style={styles.shareButton}
+          disabled={emailLoading}
+          onPress={handleSubmit(onSubmit)}>
+          {emailLoading ? (
+            <LottieView
+              source={LoadingAnimation}
+              autoPlay
+              loop
+              style={{width: 25, height: 25}}
+            />
+          ) : (
+            <>
+              <Share />
+              <Text style={styles.buttonTextShare}>EXPORTAR</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </>
+    );
+  };
+
+  const renderContentModal = () => {
+    if (!game.gameFinished) {
+      return (
+        <View style={styles.contentContainer}>
+          <Text style={styles.modalTitle}>Deseja continuar esta partida?</Text>
+          <TouchableOpacity
+            style={styles.tofileButton}
+            onPress={() => {
+              dispatch(ScoreBoardActions.setGameId(gameId));
+              navigation.navigate('ScoreBoard', {
+                screen: 'ScoreBoard',
+              });
+            }}>
+            <Text style={styles.buttonTextToFile}>CONTINUAR</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    if (emailSuccess) {
+      return (
+        <View style={styles.contentContainer}>
+          <LottieView
+            source={CheckAnimation}
+            autoPlay
+            loop={false}
+            style={{width: 100, height: 100}}
+          />
+          <Text style={styles.modalText}>E-mail enviado</Text>
+        </View>
+      );
+    }
+    if (emailError) {
+      return (
+        <View style={styles.contentContainer}>
+          <LottieView
+            source={ErrorAnimation}
+            autoPlay
+            loop={false}
+            style={{width: 200, height: 200}}
+          />
+          <Text style={styles.modalText}>Seu e-mail não foi enviado.</Text>
+          <Text style={styles.modalText}>Tente novamente!</Text>
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.contentContainer}>
+        <Text style={styles.modalTitle}>Deseja exportar essa partida?</Text>
+        <Text style={styles.modalText}>
+          Isto criará uma cópia da súmula e irá enviá-la para o e-mail abaixo.
+        </Text>
+
+        {renderEmailContent()}
+      </View>
+    );
+  };
 
   const renderModal = () => {
     return (
@@ -41,45 +173,15 @@ const HistoryCard = ({game, gameId, navigation}) => {
           <View style={styles.closeContainer}>
             <TouchableOpacity
               style={styles.closeButton}
-              onPress={() => setModalIsVisible(false)}>
+              onPress={() => {
+                setModalIsVisible(false);
+                dispatch(EmailActions.resetEmail());
+                reset();
+              }}>
               <Close />
             </TouchableOpacity>
           </View>
-          {!game.gameFinished ? (
-            <View style={styles.contentContainer}>
-              <Text style={styles.modalTitle}>
-                Deseja continuar esta partida?
-              </Text>
-              <TouchableOpacity
-                style={styles.tofileButton}
-                onPress={() => {
-                  dispatch(ScoreBoardActions.setGameId(gameId));
-                  navigation.navigate('ScoreBoard', {
-                    screen: 'ScoreBoard',
-                  });
-                }}>
-                <Text style={styles.buttonTextToFile}>CONTINUAR</Text>
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.contentContainer}>
-              <Text style={styles.modalTitle}>
-                Deseja exportar essa partida?
-              </Text>
-              <Text style={styles.modalText}>
-                Isso criará uma cópia da súmula.
-              </Text>
-
-              <TouchableOpacity
-                style={styles.shareButton}
-                onPress={() => {
-                  dispatch(EmailActions.sendEmail(game));
-                }}>
-                <Share />
-                <Text style={styles.buttonTextShare}>EXPORTAR</Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {renderContentModal()}
         </View>
       </Modal>
     );

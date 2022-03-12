@@ -2,6 +2,7 @@ export const Types = {
   SEND_EMAIL: 'SEND_EMAIL',
   SEND_EMAIL_SUCCESS: 'SEND_EMAIL_SUCCESS',
   SEND_EMAIL_ERROR: 'SEND_EMAIL_ERROR',
+  RESET_EMAIL: 'RESET_EMAIL',
 };
 
 const INITIAL_STATE = {
@@ -33,6 +34,13 @@ export default function email(state = INITIAL_STATE, action) {
         emailLoading: false,
         emailError: true,
       };
+    case Types.RESET_EMAIL:
+      return {
+        ...state,
+        emailSuccess: false,
+        emailLoading: false,
+        emailError: false,
+      };
     default:
       return state;
   }
@@ -50,5 +58,8 @@ export const Creators = {
   sendEmailError: payload => ({
     type: Types.SEND_EMAIL_ERROR,
     payload,
+  }),
+  resetEmail: () => ({
+    type: Types.RESET_EMAIL,
   }),
 };
