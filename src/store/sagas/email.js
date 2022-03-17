@@ -5,12 +5,20 @@ import {API_URL} from 'react-native-dotenv';
 
 function* sendEmail({payload}) {
   try {
-    const {status, data} = yield call(axios.post, `${API_URL}/sendEmail`, {
-      ...payload.game,
-      receiver: payload.data.email,
-    });
+    const config = {timeout: 1000 * 5};
+    const {status, data} = yield call(
+      axios.post,
+      `${API_URL}/sendEmail`,
+      {
+        ...payload.game,
+        receiver: payload.data.email,
+      },
+      config,
+    );
     if (status === 200) {
       yield put(EmailActions.sendEmailSuccess());
+    } else {
+      yield put(EmailActions.sendEmailError());
     }
   } catch (err) {
     yield put(EmailActions.sendEmailError());

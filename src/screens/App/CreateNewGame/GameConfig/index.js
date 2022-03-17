@@ -23,8 +23,6 @@ const schema = yup.object().shape({
   pause: yup.string().required('Campo Obrigatório'),
   technicalInterval: yup.string().required('Campo Obrigatório'),
   medicalAssistence: yup.string().required('Campo Obrigatório'),
-  aceleration: yup.string().required('Campo Obrigatório'),
-  advantage: yup.string().required('Campo Obrigatório'),
 });
 
 const GameConfig = ({navigation, route}) => {
@@ -44,8 +42,6 @@ const GameConfig = ({navigation, route}) => {
       pause: null,
       technicalInterval: null,
       medicalAssistence: null,
-      aceleration: null,
-      advantage: null,
     },
   });
 
@@ -117,6 +113,7 @@ const GameConfig = ({navigation, route}) => {
         name="stopOn"
         control={control}
         items={[
+          {label: '5', value: '5'},
           {label: '10', value: '10'},
           {label: '11', value: '11'},
           {label: '12', value: '12'},
@@ -128,6 +125,7 @@ const GameConfig = ({navigation, route}) => {
         name="heating"
         control={control}
         items={[
+          {label: '5', value: '5'},
           {label: '100', value: '100'},
           {label: '110', value: '110'},
           {label: '120', value: '120'},
@@ -140,6 +138,7 @@ const GameConfig = ({navigation, route}) => {
         name="pause"
         control={control}
         items={[
+          {label: '5', value: '5'},
           {label: '60', value: '60'},
           {label: '65', value: '65'},
           {label: '70', value: '70'},
@@ -169,30 +168,6 @@ const GameConfig = ({navigation, route}) => {
           {label: '120', value: '120'},
           {label: '125', value: '125'},
           {label: '130', value: '130'},
-        ]}
-      />
-      <SelectInput
-        label="Sistema de aceleração"
-        name="aceleration"
-        control={control}
-        items={[
-          {label: '3500', value: '3500'},
-          {label: '3600', value: '3600'},
-          {label: '3700', value: '3700'},
-          {label: '3800', value: '3800'},
-          {label: '3900', value: '3900'},
-          {label: '4000', value: '4000'},
-        ]}
-      />
-      <Text style={styles.sectionTitle}>Vantagens</Text>
-      <SelectInput
-        label="Vantagem"
-        name="advantage"
-        control={control}
-        items={[
-          {label: 'No início da partida', value: 'start'},
-          {label: 'No meio da partida', value: 'middle'},
-          {label: 'No final da partida', value: 'end'},
         ]}
       />
       <View style={styles.buttonContainer}>

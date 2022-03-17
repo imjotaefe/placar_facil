@@ -74,9 +74,8 @@ const ScoreBoard = ({navigation}) => {
   const [isAbleExpediteSystem, setIsAbleExpediteSystem] = useState(true);
   const [showExpediteModal, setShowExpediteModal] = useState(false);
   const dispatch = useDispatch();
-  const {leftTeamScore, rightTeamScore, gameId} = useSelector(
-    ({scoreBoard}) => scoreBoard,
-  );
+  const {leftTeamScore, rightTeamScore, gameId, alteringNames, playersName} =
+    useSelector(({scoreBoard}) => scoreBoard);
   const {currentUser} = auth;
 
   //load all data from the database once
@@ -108,6 +107,22 @@ const ScoreBoard = ({navigation}) => {
           gameTime: gameTimeConfig,
           totalGameTime: totalGameTimeConfig,
         });
+
+        const leftPlayers = data?.val()?.leftPlayers;
+        delete leftPlayers.finalGame;
+        delete leftPlayers.finalScore;
+
+        const rightPlayers = data?.val()?.rightPlayers;
+        delete rightPlayers.finalGame;
+        delete rightPlayers.finalScore;
+
+        dispatch(
+          ScoreBoardActions.setPlayersName({
+            left: leftPlayers,
+            right: rightPlayers,
+          }),
+        );
+
         setIsExpediteSystem(data?.val()?.expediteSystem);
         setPauseBetweenGamesNumber(data?.val()?.pause);
         setPauseNumber(data?.val()?.pause);
@@ -134,6 +149,10 @@ const ScoreBoard = ({navigation}) => {
       setLoadingData(false);
     }
   }, []);
+
+  useEffect(() => {
+    setIsPaused(alteringNames);
+  }, [alteringNames]);
 
   //set best of two
   useEffect(() => {
@@ -482,10 +501,10 @@ const ScoreBoard = ({navigation}) => {
           style={styles.addPoint}
           onPress={() => {
             handlePoints(team, 'add');
-            setDisableToClick(true);
-            setTimeout(() => {
-              setDisableToClick(false);
-            }, 1000);
+            // setDisableToClick(true);
+            // setTimeout(() => {
+            //   setDisableToClick(false);
+            // }, 1000);
           }}
           disabled={disableToClick}
         />
@@ -493,10 +512,10 @@ const ScoreBoard = ({navigation}) => {
           style={styles.removePoint}
           onPress={() => {
             handlePoints(team, 'remove');
-            setDisableToClick(true);
-            setTimeout(() => {
-              setDisableToClick(false);
-            }, 1000);
+            // setDisableToClick(true);
+            // setTimeout(() => {
+            //   setDisableToClick(false);
+            // }, 1000);
           }}
           disabled={disableToClick}
         />
@@ -543,8 +562,8 @@ const ScoreBoard = ({navigation}) => {
               <Text style={styles.playerName} numberOfLines={1}>
                 {checkGameShouldRotate({
                   game,
-                  optionOne: gameData?.rightPlayers?.player1,
-                  optionTwo: gameData?.leftPlayers?.player1,
+                  optionOne: playersName?.right?.player1,
+                  optionTwo: playersName?.left?.player1,
                 })}
               </Text>
               {renderScore(
@@ -558,8 +577,8 @@ const ScoreBoard = ({navigation}) => {
                 <Text style={styles.playerName} numberOfLines={1}>
                   {checkGameShouldRotate({
                     game,
-                    optionOne: gameData?.rightPlayers?.player2,
-                    optionTwo: gameData?.leftPlayers?.player2,
+                    optionOne: playersName?.right?.player2,
+                    optionTwo: playersName?.left?.player2,
                   })}
                 </Text>
               )}
@@ -576,8 +595,9 @@ const ScoreBoard = ({navigation}) => {
               <Text style={styles.playerName} numberOfLines={1}>
                 {checkGameShouldRotate({
                   game,
-                  optionOne: gameData?.leftPlayers?.player1,
-                  optionTwo: gameData?.rightPlayers?.player1,
+
+                  optionOne: playersName?.left?.player1,
+                  optionTwo: playersName?.right?.player1,
                 })}
               </Text>
               {renderScore(
@@ -591,8 +611,8 @@ const ScoreBoard = ({navigation}) => {
                 <Text style={styles.playerName} numberOfLines={1}>
                   {checkGameShouldRotate({
                     game,
-                    optionOne: gameData?.leftPlayers?.player2,
-                    optionTwo: gameData?.rightPlayers?.player2,
+                    optionOne: playersName?.left?.player2,
+                    optionTwo: playersName?.right?.player2,
                   })}
                 </Text>
               )}

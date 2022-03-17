@@ -106,7 +106,9 @@ const Sumula = ({navigation, route}) => {
     }
 
     const gameArray = Object.keys(game).flatMap(function (key) {
-      return key !== 'gameFinishedAt' ? game[key] : [];
+      return key !== 'gameFinishedAt' && key !== 'expediteSystemWasUsed'
+        ? game[key]
+        : [];
     });
 
     return (
@@ -130,10 +132,14 @@ const Sumula = ({navigation, route}) => {
         <View style={styles.textHeaderContainer}>
           <Text style={styles.title}>SUMULA</Text>
         </View>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('Graph', {gameData})}>
-          <Graph />
-        </TouchableOpacity>
+        {gameData?.gameFinished ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Graph', {gameData})}>
+            <Graph />
+          </TouchableOpacity>
+        ) : (
+          <View />
+        )}
       </View>
       {renderPlayers()}
       {renderGames()}

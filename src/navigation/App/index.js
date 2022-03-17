@@ -9,6 +9,7 @@ import GameConfig from '../../screens/App/CreateNewGame/GameConfig';
 import Sumula from '../../screens/App/Sumula';
 import Graph from '../../screens/App/Sumula/Graph';
 import WarmUp from './../../screens/App/CreateNewGame/WarmUp/index';
+import AlterNames from '../../screens/App/AlterNames';
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ const AppStack = () => {
       <Stack.Screen name="Sumula" component={Sumula} />
       <Stack.Screen name="Graph" component={Graph} />
       <Stack.Screen name="WarmUp" component={WarmUp} />
+      <Stack.Screen name="AlterNames" component={AlterNames} />
     </Stack.Navigator>
   );
 };

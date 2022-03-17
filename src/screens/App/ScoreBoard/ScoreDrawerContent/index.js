@@ -5,7 +5,7 @@ import Back from '../../../../assets/icons/back.svg';
 import EditText from '../../../../assets/icons/editText.svg';
 import Restart from '../../../../assets/icons/restart.svg';
 import styles from './styles';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {Creators as ScoreBoardActions} from '../../../../store/ducks/scoreBoard';
 
 const ScoreDrawerContent = ({navigation}) => {
@@ -32,7 +32,10 @@ const ScoreDrawerContent = ({navigation}) => {
     {
       text: 'Alterar nomes',
       icon: <EditText width={18} />,
-      action: () => console.log('alterar nomes'),
+      action: () => {
+        navigation.closeDrawer();
+        navigation.navigate('AlterNames');
+      },
     },
   ];
 

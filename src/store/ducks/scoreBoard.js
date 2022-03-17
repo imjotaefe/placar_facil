@@ -2,12 +2,25 @@ export const Types = {
   SET_LEFT_SCORE: 'SET_LEFT_SCORE',
   SET_RIGHT_SCORE: 'SET_RIGHT_SCORE',
   SET_GAME_ID: 'SET_GAME_ID',
+  ALTERING_NAMES: 'ALTERING_NAMES',
+  SET_PLAYERS: 'SET_PLAYERS',
 };
 
 const INITIAL_STATE = {
   leftTeamScore: 0,
   rightTeamScore: 0,
   gameId: null,
+  alteringNames: false,
+  playersName: {
+    left: {
+      player1: '',
+      player2: '',
+    },
+    right: {
+      player1: '',
+      player2: '',
+    },
+  },
 };
 
 export default function scoreBoard(state = INITIAL_STATE, action) {
@@ -27,6 +40,16 @@ export default function scoreBoard(state = INITIAL_STATE, action) {
         ...state,
         gameId: action.payload,
       };
+    case Types.ALTERING_NAMES:
+      return {
+        ...state,
+        alteringNames: action.payload,
+      };
+    case Types.SET_PLAYERS:
+      return {
+        ...state,
+        playersName: action.payload,
+      };
     default:
       return state;
   }
@@ -43,6 +66,14 @@ export const Creators = {
   }),
   setGameId: data => ({
     type: Types.SET_GAME_ID,
+    payload: data,
+  }),
+  setAlteringNames: data => ({
+    type: Types.ALTERING_NAMES,
+    payload: data,
+  }),
+  setPlayersName: data => ({
+    type: Types.SET_PLAYERS,
     payload: data,
   }),
 };

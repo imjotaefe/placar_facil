@@ -72,7 +72,9 @@ const Graph = ({navigation, route}) => {
     }
 
     const gameArray = Object.keys(game).flatMap(function (key) {
-      return key !== 'gameFinishedAt' ? game[key] : [];
+      return key !== 'gameFinishedAt' && key !== 'expediteSystemWasUsed'
+        ? game[key]
+        : [];
     });
     const lastPoint = gameArray[gameArray.length - 1];
 
@@ -114,7 +116,9 @@ const Graph = ({navigation, route}) => {
       }
 
       const gameArray = Object.keys(gameInfo).flatMap(function (key) {
-        return key !== 'gameFinishedAt' ? gameInfo[key] : [];
+        return key !== 'gameFinishedAt' && key !== 'expediteSystemWasUsed'
+          ? gameInfo[key]
+          : [];
       });
 
       if (
