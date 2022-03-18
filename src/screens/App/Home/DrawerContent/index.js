@@ -21,6 +21,7 @@ const DrawerContent = ({navigation}) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity
+        hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
         style={styles.backContainer}
         onPress={() => navigation.closeDrawer()}>
         <Back />
@@ -41,12 +42,6 @@ const DrawerContent = ({navigation}) => {
           ))}
         </View>
         <View style={styles.settingsContainer}>
-          {/* <TouchableOpacity
-            style={styles.backContainer}
-            onPress={() => console.log('configurações')}>
-            <Settings />
-            <Text style={styles.text}>Configurações</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
             style={styles.backContainer}
             onPress={() => {

@@ -40,10 +40,10 @@ const handleSide = ({
   setIsExpediteSystem,
   isExpediteSystem,
   dispatch,
+  saqueSettings,
+  setSaqueSettings,
 }) => {
   if (!isBestOfTwo) {
-    console.log('newScore: ', newScore);
-    console.log('stop on', gameData?.stopOn);
     if (newScore === Number(gameData?.stopOn)) {
       changeGame(setPauseBetweenGames, setIsExpediteSystem);
       return changeSides({
@@ -57,6 +57,8 @@ const handleSide = ({
         resetTimer,
         isExpediteSystem,
         dispatch,
+        saqueSettings,
+        setSaqueSettings,
       });
     }
   }
@@ -75,6 +77,8 @@ const handleSide = ({
         resetTimer,
         isExpediteSystem,
         dispatch,
+        saqueSettings,
+        setSaqueSettings,
       });
     }
     if (gameData && side === 'left' && newScore - 2 === rightTeamScore) {
@@ -91,6 +95,8 @@ const handleSide = ({
         resetTimer,
         isExpediteSystem,
         dispatch,
+        saqueSettings,
+        setSaqueSettings,
       });
     }
   }
@@ -107,6 +113,8 @@ const changeSides = async ({
   resetTimer,
   isExpediteSystem,
   dispatch,
+  saqueSettings,
+  setSaqueSettings,
 }) => {
   dispatch(ScoreBoardActions.setRightScore(0));
   dispatch(ScoreBoardActions.setLeftScore(0));
@@ -131,6 +139,10 @@ const changeSides = async ({
         expediteSystemWasUsed: isExpediteSystem,
       },
     },
+    saqueSettings: {
+      ...pastGame.saqueSettings,
+      countSaque: 1,
+    },
     leftPlayers: {
       ...pastGame.leftPlayers,
       finalScore: 0,
@@ -148,7 +160,7 @@ const changeSides = async ({
           : Number(pastGame.rightPlayers.finalGame),
     },
   };
-
+  setSaqueSettings({...saqueSettings, countSaque: 1});
   await updateGameData({data, gameId});
 
   setGame(game + 1);

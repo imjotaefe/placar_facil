@@ -9,9 +9,12 @@ function Header({navigation, hasBack, text, onClickAddFunction}) {
     <View style={{paddingTop: 5}}>
       {hasBack && (
         <TouchableOpacity
+          hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
           onPress={() => {
             navigation.goBack();
-            onClickAddFunction();
+            if (onClickAddFunction) {
+              onClickAddFunction();
+            }
           }}>
           <View style={styles.backButton}>
             <LeftArrow />

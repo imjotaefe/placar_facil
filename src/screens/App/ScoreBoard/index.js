@@ -46,8 +46,7 @@ const ScoreBoard = ({navigation}) => {
   });
   const [modalisVisible, setModalIsVisible] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
-  const [dim, setDim] = useState();
-  const [isPortrait, setIsPortrait] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(true);
   const [gameData, setGameData] = useState(null);
   const [game, setGame] = useState(null);
   const [pointId, setPointId] = useState(1);
@@ -66,7 +65,6 @@ const ScoreBoard = ({navigation}) => {
     saqueSide: 'left',
     saqueTeamSide: 'top',
   });
-  const [disableToClick, setDisableToClick] = useState(false);
   const [loadingData, setLoadingData] = useState(false);
   const [isBestOfTwo, setIsBestOfTwo] = useState(false);
   const [isChangingGame, setIsChangingGame] = useState(false);
@@ -312,14 +310,9 @@ const ScoreBoard = ({navigation}) => {
   //update dimensions
   useEffect(() => {
     Dimensions.addEventListener('change', ({window: {width, height}}) => {
-      setDim({width, height});
+      setIsPortrait(height >= width);
     });
   }, []);
-
-  //update portrait
-  useEffect(() => {
-    setIsPortrait(dim?.height >= dim?.width);
-  }, [dim]);
 
   //check if it is portrait
   useEffect(() => {
@@ -394,6 +387,8 @@ const ScoreBoard = ({navigation}) => {
           setIsExpediteSystem,
           isExpediteSystem,
           dispatch,
+          saqueSettings,
+          setSaqueSettings,
         });
         return saveSumula({
           leftScore: newScore,
@@ -437,6 +432,8 @@ const ScoreBoard = ({navigation}) => {
         setIsExpediteSystem,
         isExpediteSystem,
         dispatch,
+        saqueSettings,
+        setSaqueSettings,
       });
       return saveSumula({
         leftScore: leftTeamScore,
@@ -501,23 +498,13 @@ const ScoreBoard = ({navigation}) => {
           style={styles.addPoint}
           onPress={() => {
             handlePoints(team, 'add');
-            // setDisableToClick(true);
-            // setTimeout(() => {
-            //   setDisableToClick(false);
-            // }, 1000);
           }}
-          disabled={disableToClick}
         />
         <TouchableOpacity
           style={styles.removePoint}
           onPress={() => {
             handlePoints(team, 'remove');
-            // setDisableToClick(true);
-            // setTimeout(() => {
-            //   setDisableToClick(false);
-            // }, 1000);
           }}
-          disabled={disableToClick}
         />
         <Text style={styles.scoreNumber} numberOfLines={1}>
           {team === 'right' ? rightTeamScore : leftTeamScore}

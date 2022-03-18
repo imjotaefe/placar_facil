@@ -33,7 +33,7 @@ const Home = ({navigation}) => {
       <View style={styles.header}>
         <View />
         <Logo />
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+        <TouchableOpacity hitSlop={{top: 20, bottom: 20, left: 20, right: 20}} onPress={() => navigation.openDrawer()}>
           <Hamburguer />
         </TouchableOpacity>
       </View>
@@ -97,26 +97,40 @@ const Home = ({navigation}) => {
             />
           </View>
         ) : showType === 'INPROGRESS' ? (
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            style={styles.flat}
-            data={games ? Object.values(games) : []}
-            ListFooterComponent={<View style={{height: 130}} />}
-            renderItem={({item, index}) => {
-              if (!item.gameFinished) {
-                return index === 6 ? (
-                  <View style={styles.spacer} />
-                ) : (
-                  <HistoryCard
-                    game={item}
-                    gameId={Object.keys(games)[index]}
-                    navigation={navigation}
-                  />
-                );
-              }
-            }}
-          />
+          <>
+           {!games || Object.values(games).length === 0 ? (
+           <View style={styles.flat}>
+             <Text style={styles.emptyList}>Não foi encontrado nenhuma partida em andamento</Text>
+           </View>
+           ) : (
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              style={styles.flat}
+              data={games ? Object.values(games) : []}
+              ListFooterComponent={<View style={{height: 130}} />}
+              renderItem={({item, index}) => {
+                if (!item.gameFinished) {
+                  return index === 6 ? (
+                    <View style={styles.spacer} />
+                  ) : (
+                    <HistoryCard
+                      game={item}
+                      gameId={Object.keys(games)[index]}
+                      navigation={navigation}
+                    />
+                  );
+                }
+              }}
+            />
+            )}
+          </>
         ) : (
+          <>
+           {!games || Object.values(games).length === 0 ? (
+           <View style={styles.flat}>
+              <Text style={styles.emptyList}>Não foi encontrado nenhuma partida finalizada</Text>
+           </View>
+           ) : (
           <FlatList
             showsVerticalScrollIndicator={false}
             style={styles.flat}
@@ -136,6 +150,8 @@ const Home = ({navigation}) => {
               }
             }}
           />
+          )}
+          </>
         )}
       </View>
       <View>

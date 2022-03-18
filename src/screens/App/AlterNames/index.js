@@ -60,9 +60,13 @@ const AlterNames = ({navigation}) => {
 
   useEffect(() => {
     if (gameData) {
-      setValue('player1', playersName?.left?.player1);
-      setValue('player2', playersName?.left?.player2);
+      if (type === 'single') {
+        setValue('player1', playersName?.left?.player1);
+        setValue('player2', playersName?.right?.player1);
+      }
       if (type === 'pair') {
+        setValue('player1', playersName?.left?.player1);
+        setValue('player2', playersName?.left?.player2);
         setValue('player3', playersName?.right?.player1);
         setValue('player4', playersName?.right?.player2);
       }

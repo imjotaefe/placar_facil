@@ -56,6 +56,12 @@ const styles = StyleSheet.create({
     margin: 5,
     marginTop: 10,
   },
+  emptyList: {
+    justifyContent: 'center',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    color: colors.darkgray,
+  },
 });
 
 export default styles;

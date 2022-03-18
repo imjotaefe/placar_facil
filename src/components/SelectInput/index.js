@@ -4,6 +4,7 @@ import styles from './styles';
 import RNPickerSelect from 'react-native-picker-select';
 import {colors} from '../../utils';
 import {Controller} from 'react-hook-form';
+import ErrorInput from './../ErrorInput/index';
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
@@ -28,26 +29,29 @@ const pickerSelectStyles = StyleSheet.create({
   },
 });
 
-const SelectInput = ({label, items, halfItem, control, name}) => {
+const SelectInput = ({label, items, halfItem, control, name, errors}) => {
   return (
     <Controller
       control={control}
       name={name}
       defaultValue=""
       render={({field: {onChange, value}}) => (
-        <View
-          style={[
-            styles.container,
-            {maxWidth: halfItem && 130, marginRight: halfItem && 15},
-          ]}>
-          <Text style={styles.label}>{label}</Text>
-          <RNPickerSelect
-            style={pickerSelectStyles}
-            useNativeAndroidPickerStyle={false}
-            onValueChange={value => onChange(value)}
-            items={items}
-          />
-        </View>
+        <>
+          <View
+            style={[
+              styles.container,
+              {maxWidth: halfItem && 130, marginRight: halfItem && 15},
+            ]}>
+            <Text style={styles.label}>{label}</Text>
+            <RNPickerSelect
+              style={pickerSelectStyles}
+              useNativeAndroidPickerStyle={false}
+              onValueChange={value => onChange(value)}
+              items={items}
+            />
+          </View>
+          <ErrorInput error={errors?.[name]?.message} />
+        </>
       )}
     />
   );

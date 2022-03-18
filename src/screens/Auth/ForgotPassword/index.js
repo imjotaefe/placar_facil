@@ -44,10 +44,11 @@ const ForgotPassword = ({navigation}) => {
         setTimeout(() => {
           navigation.goBack();
         }, 5000);
+        setError(false);
       })
       .catch(() => {
         setIsVisible(true);
-        setLoading(true);
+        setLoading(false);
         setError(true);
       });
   };

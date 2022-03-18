@@ -22,10 +22,12 @@ const renderMenu = ({
   return (
     <>
       <TouchableOpacity
+        hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
         onPress={() => navigation.openDrawer()}
         style={styles.menu}>
         <Hamburguer height={30} width={30} />
       </TouchableOpacity>
+
       <View style={styles.rightMenu}>
         {isAbleExpediteSystem && !isExpediteSystem && (
           <View style={styles.button}>

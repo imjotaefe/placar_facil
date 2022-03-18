@@ -12,6 +12,7 @@ const expediteModal = ({showExpediteModal, setShowExpediteModal}) => {
         <View style={styles.modal}>
           <View style={styles.closeContainer}>
             <TouchableOpacity
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
               style={styles.closeButton}
               onPress={() => {
                 setShowExpediteModal(false);

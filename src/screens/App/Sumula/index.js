@@ -126,7 +126,9 @@ const Sumula = ({navigation, route}) => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+          onPress={() => navigation.goBack()}>
           <LeftArrow />
         </TouchableOpacity>
         <View style={styles.textHeaderContainer}>
@@ -134,6 +136,7 @@ const Sumula = ({navigation, route}) => {
         </View>
         {gameData?.gameFinished ? (
           <TouchableOpacity
+            hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
             onPress={() => navigation.navigate('Graph', {gameData})}>
             <Graph />
           </TouchableOpacity>

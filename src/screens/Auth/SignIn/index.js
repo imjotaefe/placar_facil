@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import styles from './styles';
 import Button from '../../../components/Button';
@@ -9,8 +9,10 @@ import firebase from 'firebase';
 import {yupResolver} from '@hookform/resolvers/yup';
 import {Controller, useForm} from 'react-hook-form';
 import * as yup from 'yup';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 import {Creators as AuthActions} from '../../../store/ducks/auth';
+import {Snackbar} from 'react-native-paper';
+import colors from './../../../utils/colors';
 
 const schema = yup.object().shape({
   email: yup.string().required('Campo Obrigatório').email('Email inválido'),
@@ -21,6 +23,14 @@ const schema = yup.object().shape({
 });
 
 const SignIn = ({navigation}) => {
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState();
+  const [snack, setSnack] = useState({
+    text: '',
+    color: '',
+  });
+  const [snackIsVisible, setSnackIsVisible] = useState(false);
+
   const {
     handleSubmit,
     formState: {errors},
@@ -32,8 +42,6 @@ const SignIn = ({navigation}) => {
       password: '',
     },
   });
-  const dispatch = useDispatch();
-  const [loading, setLoading] = useState();
 
   const onSubmit = data => {
     setLoading(true);
@@ -46,9 +54,16 @@ const SignIn = ({navigation}) => {
         dispatch(AuthActions.authSuccess(user));
         setLoading(false);
       })
-      .catch(error =>
-        dispatch(AuthActions.authError('Erro ao autenticar usuário')),
-      );
+      .catch(error => {
+        console.log('error', error);
+        setSnack({
+          text: 'Erro ao autenticar usuário',
+          color: colors.red,
+        });
+        setSnackIsVisible(true);
+        dispatch(AuthActions.authError('Erro ao autenticar usuário'));
+        setLoading(false);
+      });
   };
 
   return (
@@ -112,6 +127,28 @@ const SignIn = ({navigation}) => {
           <Text style={styles.createAccount}>Não possuo uma conta</Text>
         </TouchableOpacity>
       </View>
+      <Snackbar
+        visible={snackIsVisible}
+        onDismiss={() => {
+          setSnack({
+            text: '',
+            color: '',
+          });
+          setSnackIsVisible(false);
+        }}
+        style={{backgroundColor: snack.color, elevation: 1}}
+        action={{
+          label: 'Fechar',
+          onPress: () => {
+            setSnack({
+              text: '',
+              color: '',
+            });
+            setSnackIsVisible(false);
+          },
+        }}>
+        {snack.text}
+      </Snackbar>
     </ScrollView>
   );
 };

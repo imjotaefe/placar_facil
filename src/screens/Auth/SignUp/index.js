@@ -13,9 +13,19 @@ import {useDispatch} from 'react-redux';
 import {Creators as AuthActions} from '../../../store/ducks/auth';
 
 const schema = yup.object().shape({
-  email: yup.string(),
-  password: yup.string(),
-  confirm_password: yup.string(),
+  name: yup.string().required('Campo Obrigatório'),
+  email: yup.string().required('Campo Obrigatório').email('Email inválido'),
+  password: yup
+    .string()
+    .required('Campo Obrigatório')
+    .min(8, 'Senha deve conter ao menos 8 caracteres'),
+  confirm_password: yup.string().when('password', {
+    is: password => password,
+    then: yup
+      .string()
+      .oneOf([yup.ref('password'), null], 'Senhas não conferem')
+      .required('Digite a confirmação da nova senha'),
+  }),
 });
 
 const SignUp = ({navigation}) => {

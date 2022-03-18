@@ -172,6 +172,7 @@ const HistoryCard = ({game, gameId, navigation}) => {
         <View style={styles.modal}>
           <View style={styles.closeContainer}>
             <TouchableOpacity
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
               style={styles.closeButton}
               onPress={() => {
                 setModalIsVisible(false);
@@ -255,6 +256,7 @@ const HistoryCard = ({game, gameId, navigation}) => {
             </Text>
           </View>
           <TouchableOpacity
+            hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
             onPress={() => {
               setModalIsVisible(true);
             }}>

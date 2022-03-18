@@ -61,19 +61,19 @@ const pauseModal = ({
         <View style={styles.buttonsContainer}>
           <TouchableOpacity
             style={{
-              opacity: technicalBreak === 1 ? 0.5 : 1,
+              opacity: technicalBreak === 1 || technicalBreak === 0 ? 0.5 : 1,
               ...styles.tofileButton,
             }}
-            disabled={technicalBreak === 1}
+            disabled={technicalBreak === 1 || technicalBreak === 0}
             onPress={() => setShowTechnicalBreak(true)}>
             <Text style={styles.buttonTextToFile}>PAUSA TÉCNICA</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={{
-              opacity: healthCare === 1 ? 0.5 : 1,
+              opacity: healthCare === 1 || healthCare === 0 ? 0.5 : 1,
               ...styles.shareButton,
             }}
-            disabled={healthCare === 1}
+            disabled={healthCare === 1 || healthCare === 0}
             onPress={() => setShowHealthCare(true)}>
             <Text style={styles.buttonTextShare}>ASSISTÊNCIA MÉDICA</Text>
           </TouchableOpacity>
@@ -88,6 +88,7 @@ const pauseModal = ({
         <View style={styles.modal}>
           <View style={styles.closeContainer}>
             <TouchableOpacity
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
               style={styles.closeButton}
               onPress={() => {
                 closeModal();

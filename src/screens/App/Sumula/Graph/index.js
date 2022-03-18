@@ -175,6 +175,7 @@ const Graph = ({navigation, route}) => {
         <View style={styles.modal}>
           <View style={styles.closeContainer}>
             <TouchableOpacity
+              hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
               style={styles.closeButton}
               onPress={() => setModalIsVisible(false)}>
               <Close />
@@ -241,7 +242,9 @@ const Graph = ({navigation, route}) => {
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            hitSlop={{top: 20, bottom: 20, left: 20, right: 20}}
+            onPress={() => navigation.goBack()}>
             <LeftArrow />
           </TouchableOpacity>
           <View style={styles.textHeaderContainer}>
