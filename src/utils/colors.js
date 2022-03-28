@@ -8,6 +8,7 @@ const colors = {
   weakOrange: '#fffcf7ff',
   weakBlue: '#faf9feff',
   blue: '#5754E9',
+  lightGray: '#f5f5f5',
 };
 
 export default colors;

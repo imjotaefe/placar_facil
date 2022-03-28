@@ -29,12 +29,20 @@ const pickerSelectStyles = StyleSheet.create({
   },
 });
 
-const SelectInput = ({label, items, halfItem, control, name, errors}) => {
+const SelectInput = ({
+  label,
+  items,
+  halfItem,
+  control,
+  name,
+  errors,
+  defaultValue,
+}) => {
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={defaultValue}
       render={({field: {onChange, value}}) => (
         <>
           <View
@@ -46,6 +54,7 @@ const SelectInput = ({label, items, halfItem, control, name, errors}) => {
             <RNPickerSelect
               style={pickerSelectStyles}
               useNativeAndroidPickerStyle={false}
+              value={value || defaultValue}
               onValueChange={value => onChange(value)}
               items={items}
             />

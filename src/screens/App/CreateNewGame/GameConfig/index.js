@@ -36,12 +36,12 @@ const GameConfig = ({navigation, route}) => {
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
-      bestOf: '',
-      stopOn: '',
-      heating: '',
-      pause: '',
-      technicalInterval: '',
-      medicalAssistence: '',
+      bestOf: '3',
+      stopOn: '11',
+      heating: '100',
+      pause: '60',
+      technicalInterval: '60',
+      medicalAssistence: '100',
     },
   });
 
@@ -100,6 +100,7 @@ const GameConfig = ({navigation, route}) => {
       <SelectInput
         label="Melhor de"
         name="bestOf"
+        defaultValue={'3'}
         control={control}
         errors={errors}
         items={[

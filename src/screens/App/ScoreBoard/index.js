@@ -33,6 +33,7 @@ import pauseModal from './components/pauseModal';
 import expediteModal from './components/expediteModal';
 import {useDispatch, useSelector} from 'react-redux';
 import {Creators as ScoreBoardActions} from '../../../store/ducks/scoreBoard';
+import JumpTime from './../../../components/JumpTime/index';
 dayjs.extend(duration);
 var relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
@@ -494,6 +495,7 @@ const ScoreBoard = ({navigation}) => {
         <View style={styles.topRaquetContainer}>
           {topSide && saqueTeamSide === 'top' && <Raquet />}
         </View>
+        <Text style={styles.labelScore}>+</Text>
         <TouchableOpacity
           style={styles.addPoint}
           onPress={() => {
@@ -506,6 +508,7 @@ const ScoreBoard = ({navigation}) => {
             handlePoints(team, 'remove');
           }}
         />
+        <Text style={styles.labelScoreNegative}>-</Text>
         <Text style={styles.scoreNumber} numberOfLines={1}>
           {team === 'right' ? rightTeamScore : leftTeamScore}
         </Text>
@@ -522,6 +525,14 @@ const ScoreBoard = ({navigation}) => {
         <View style={styles.pauseContainer}>
           <Text style={styles.pauseCounter}>{pauseBetweenGamesNumber}</Text>
           <Text style={styles.pauseLabel}>Pausa entre os games</Text>
+          <JumpTime
+            action={() => {
+              setTimeout(() => {
+                setPauseBetweenGamesNumber(pauseNumber);
+              }, 1000);
+              setPauseBetweenGames(false);
+            }}
+          />
         </View>
       );
     }

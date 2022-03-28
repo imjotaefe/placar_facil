@@ -19,7 +19,7 @@ const shadowStyle = {
 };
 
 const ChooseType = ({navigation}) => {
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState('single');
 
   const renderType = type => {
     return (

@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   numberContainer: {
-    backgroundColor: colors.white,
+    backgroundColor: colors.lightGray,
     marginHorizontal: 30,
     paddingVertical: 0,
     minWidth: 200,
@@ -113,8 +113,24 @@ const styles = StyleSheet.create({
     zIndex: 10,
     width: '100%',
     position: 'absolute',
-    borderBottomColor: colors.gray,
+    borderBottomColor: colors.darkgray,
     borderBottomWidth: 1,
+  },
+  labelScore: {
+    color: colors.darkgray,
+    fontSize: 50,
+    position: 'absolute',
+    top: 0,
+    left: 10,
+    opacity: 0.3,
+  },
+  labelScoreNegative: {
+    color: colors.darkgray,
+    fontSize: 50,
+    position: 'absolute',
+    bottom: 0,
+    left: 10,
+    opacity: 0.3,
   },
   removePoint: {
     position: 'absolute',
@@ -122,7 +138,7 @@ const styles = StyleSheet.create({
     height: '50%',
     width: '100%',
     bottom: 0,
-    borderTopColor: colors.gray,
+    borderTopColor: colors.darkgray,
     borderTopWidth: 1,
   },
   modal: {
